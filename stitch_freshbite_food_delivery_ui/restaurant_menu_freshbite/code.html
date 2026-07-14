@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Burger Blast - FreshBite</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed-dim": "#eec209",
+                    "surface-bright": "#f8f9fa",
+                    "on-secondary-fixed-variant": "#005228",
+                    "background": "#f8f9fa",
+                    "on-surface-variant": "#5c403c",
+                    "surface-container-highest": "#e1e3e4",
+                    "secondary-fixed-dim": "#4ae183",
+                    "on-surface": "#191c1d",
+                    "on-tertiary-fixed-variant": "#574500",
+                    "surface-variant": "#e1e3e4",
+                    "primary": "#b81313",
+                    "surface-tint": "#bb1615",
+                    "primary-fixed-dim": "#ffb4aa",
+                    "tertiary-container": "#cea700",
+                    "surface-container-high": "#e7e8e9",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed": "#6bfe9c",
+                    "primary-container": "#dc3129",
+                    "on-error": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed-variant": "#930006",
+                    "outline-variant": "#e5bdb8",
+                    "secondary": "#006d37",
+                    "on-tertiary-container": "#4e3e00",
+                    "inverse-surface": "#2e3132",
+                    "primary-fixed": "#ffdad5",
+                    "error": "#ba1a1a",
+                    "inverse-primary": "#ffb4aa",
+                    "on-primary-container": "#fffbff",
+                    "surface-dim": "#d9dadb",
+                    "inverse-on-surface": "#f0f1f2",
+                    "on-secondary-container": "#00743a",
+                    "secondary-container": "#6bfe9c",
+                    "outline": "#906f6b",
+                    "error-container": "#ffdad6",
+                    "surface": "#f8f9fa",
+                    "surface-container": "#edeeef",
+                    "on-error-container": "#93000a",
+                    "on-primary-fixed": "#410001",
+                    "tertiary": "#735c00",
+                    "tertiary-fixed": "#ffe084",
+                    "on-secondary-fixed": "#00210c",
+                    "on-tertiary-fixed": "#231b00",
+                    "surface-container-low": "#f3f4f5",
+                    "on-secondary": "#ffffff",
+                    "on-background": "#191c1d",
+                    "surface-container-lowest": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "4px",
+                    "gutter": "16px",
+                    "xl": "32px",
+                    "margin-mobile": "16px",
+                    "md": "16px",
+                    "sm": "8px",
+                    "lg": "24px",
+                    "margin-desktop": "48px",
+                    "xs": "4px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "display": ["Inter"],
+                    "label-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "display-mobile": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-sm": ["Inter"],
+                    "headline-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "display": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "display-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "800"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-sm": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-header {
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .custom-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .sticky-tabs {
+        position: sticky;
+        top: 60px;
+        z-index: 40;
+      }
+      .active-tab {
+        @apply text-primary border-b-2 border-primary;
+      }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface select-none">
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-xl shadow-sm">
+<div class="flex justify-between items-center px-margin-mobile py-sm w-full max-w-7xl mx-auto">
+<button class="active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="font-display text-display-mobile font-extrabold text-primary tracking-tight">Burger Blast</h1>
+<button class="active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-primary">favorite</span>
+</button>
+</div>
+</header>
+<main class="pt-[60px] pb-32">
+<!-- Hero Section -->
+<section class="relative h-64 w-full">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="A mouth-watering, high-resolution close-up of a gourmet double cheeseburger with melting cheddar, crisp lettuce, and artisanal brioche bun. The lighting is warm and cinematic, emphasizing the juicy textures and vibrant red tomatoes. The background is a blurred, modern restaurant interior with warm timber accents and soft ambient lighting, following a premium food photography style." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCJydZnc2Q8Dcipk6MYYZ864Azr-AvgfcTNeMwiPk0fpfh1E6O0VNF8xRToYONhxTYNarfrFICa7bMaJX8zmqReGBfA9MBdxoK3geJ8qUsvfotK0ihfuC6VS0WTbaohZY8UTJ87LRfc2SjPYhK0-9c1VdG43C5SxkPo5vrFtCf92bCAkcSBzwLSXFBOeVQzBHEr41qD28GtKswBCQz64EqtDo81XhPBQPvl47W3i8XEpParK6PEhArK')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+<div class="absolute bottom-0 left-0 w-full p-margin-mobile text-white">
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-primary px-2 py-0.5 rounded-lg font-label-sm text-label-sm">Top Rated</span>
+<div class="flex items-center bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-lg font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px] mr-1" style="font-variation-settings: 'FILL' 1;">star</span>
+                        4.5 (1.2k reviews)
+                    </div>
+</div>
+<h2 class="font-headline-lg text-headline-lg mb-1">Burger Blast</h2>
+<div class="flex items-center gap-4 text-white/90 text-label-sm">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">restaurant</span> Fast Food
+                    </span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">schedule</span> 20-30 mins
+                    </span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">delivery_dining</span> Free Delivery
+                    </span>
+</div>
+</div>
+</section>
+<!-- Sticky Navigation Tabs -->
+<nav class="sticky-tabs bg-surface/95 backdrop-blur-md border-b border-outline-variant/30 px-margin-mobile overflow-x-auto custom-scrollbar">
+<div class="flex items-center gap-6 h-14">
+<a class="whitespace-nowrap font-label-lg text-label-lg text-primary border-b-2 border-primary py-4" href="#starters">Starters</a>
+<a class="whitespace-nowrap font-label-lg text-label-lg text-on-surface-variant py-4" href="#main">Main Course</a>
+<a class="whitespace-nowrap font-label-lg text-label-lg text-on-surface-variant py-4" href="#desserts">Desserts</a>
+<a class="whitespace-nowrap font-label-lg text-label-lg text-on-surface-variant py-4" href="#beverages">Beverages</a>
+</div>
+</nav>
+<!-- Menu Content -->
+<div class="px-margin-mobile mt-lg space-y-xl max-w-3xl mx-auto">
+<!-- Starters Section -->
+<section id="starters">
+<h3 class="font-headline-md text-headline-md mb-md flex items-center gap-2">
+<span class="w-1.5 h-6 bg-primary rounded-full"></span>
+                    Starters
+                </h3>
+<div class="space-y-md">
+<!-- Item 1 -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-3 flex gap-4 hover:shadow-md transition-shadow active:scale-[0.98] duration-150 border border-outline-variant/20">
+<div class="w-24 h-24 rounded-lg bg-cover bg-center shrink-0" data-alt="Crispy golden-brown mozzarella sticks stacked neatly with a side bowl of rich, vibrant red marinara sauce. The sticks have a visible cheese pull texture. Soft, bright lighting highlights the crunchy exterior. The scene is presented on a clean white surface with minimal shadows." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCikClZ_rmG-ZHCH3gW_N8bjJivoyYVGIR4EuwTjiy5T0oZSTTLon--htnO19-p8Wb76Hwo-8ugyu7XApSq0Hjn7bdPmDZkNU4QfpDXYmdd_dj93ld7eZDJI2Sxi5EmIMNwLUT4fzuQyAuRzHU6n58QlbyQc4hp-wMNWzq-7uIEV4Pk1CE2GrEDm-EZCcBkuNutLTrRlxni0n7_eWDy3DQkFwV9_VSTgPDzUNx4LKLVPPzvIDQRJtQ4')"></div>
+<div class="flex-1 flex flex-col justify-between">
+<div>
+<h4 class="font-label-lg text-label-lg text-on-surface">Mozzarella Sticks</h4>
+<p class="text-on-surface-variant text-body-md line-clamp-2 mt-1">Gooey melted cheese sticks served with marinara sauce.</p>
+</div>
+<div class="flex justify-between items-center mt-2">
+<span class="font-headline-sm text-headline-sm text-primary">$7.99</span>
+<button class="bg-primary text-on-primary px-4 py-1.5 rounded-full font-label-lg shadow-sm active:bg-primary-container transition-colors">Add</button>
+</div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-3 flex gap-4 border border-outline-variant/20">
+<div class="w-24 h-24 rounded-lg bg-cover bg-center shrink-0" data-alt="A plate of spicy buffalo chicken wings glazed in a bright orange sauce, garnished with fresh green celery sticks and a small ramekin of creamy blue cheese dressing. The steam is visible, suggesting they are fresh and hot. Professional food styling with a focus on vibrant colors and glistening textures." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDWbqe7ypGncgXItbbqTWaTj6M9dsigPd6N2D3V--fLtnVS_rcSv74guuTTh_y2tlhrmQpuQGjz1NjyCI3tfB-RKfrUR3ww4pubLo0fcp9WtwNM7BMVDPYiWQ7YH8dbKpgTdvNSeaNYhZ8a650snvzYpgfZyZ0MEIfDFQj-mJJLFQVl4ynmoKsjUM2nNbY1YqzsT1AjqPVTyluOnvCB2znJ4Uhn5xU0jewKiPrnn6KfnfRhDF4PzA7y')"></div>
+<div class="flex-1 flex flex-col justify-between">
+<div>
+<h4 class="font-label-lg text-label-lg text-on-surface">Buffalo Wings</h4>
+<p class="text-on-surface-variant text-body-md line-clamp-2 mt-1">6 pieces of crispy wings tossed in spicy buffalo sauce.</p>
+</div>
+<div class="flex justify-between items-center mt-2">
+<span class="font-headline-sm text-headline-sm text-primary">$10.99</span>
+<button class="bg-primary text-on-primary px-4 py-1.5 rounded-full font-label-lg shadow-sm active:bg-primary-container transition-colors">Add</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Main Course Section -->
+<section id="main">
+<h3 class="font-headline-md text-headline-md mb-md flex items-center gap-2">
+<span class="w-1.5 h-6 bg-primary rounded-full"></span>
+                    Main Course
+                </h3>
+<div class="space-y-md">
+<!-- Item 1 -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-3 flex gap-4 border border-outline-variant/20">
+<div class="w-24 h-24 rounded-lg bg-cover bg-center shrink-0" data-alt="The signature 'Blast Burger' featuring a thick angus beef patty, crispy smoked bacon, aged cheddar cheese, and a secret house sauce on a toasted sesame bun. High-contrast lighting focuses on the melting cheese and the texture of the grilled meat. The style is energetic and appetizing, typical of premium fast-food advertising." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAPCCaUyjHWZ3_W-tRncNXAzocgM_KsMMwCKle7fJpI_gjBIvrG8fXY3qVPtwqOXqX3WHAFmPfqhKaVb8Gu_VbAaxLIqh5cOWrgv8ziq6D6S48ziogRfhfmqJfz5GM-XuF2pf1Shr2dyhepwij2nNYIBTXyHjqhmJ8GoJIIRRt2zJYlV_S9AFlJ1QKnHTuOkB6UveP_b5cJZRLY4JdHdEkF_djaK83GF4vBqKkAVDlXti645pplZx-s')"></div>
+<div class="flex-1 flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2">
+<h4 class="font-label-lg text-label-lg text-on-surface">Blast Burger</h4>
+<span class="material-symbols-outlined text-green-600 text-sm" style="font-variation-settings: 'FILL' 1;">recommend</span>
+</div>
+<p class="text-on-surface-variant text-body-md line-clamp-2 mt-1">Angus beef, bacon, cheddar, and our secret house sauce.</p>
+</div>
+<div class="flex justify-between items-center mt-2">
+<span class="font-headline-sm text-headline-sm text-primary">$12.99</span>
+<button class="bg-primary text-on-primary px-4 py-1.5 rounded-full font-label-lg shadow-sm active:bg-primary-container transition-colors">Add</button>
+</div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-3 flex gap-4 border border-outline-variant/20">
+<div class="w-24 h-24 rounded-lg bg-cover bg-center shrink-0" data-alt="A massive BBQ Pulled Pork sandwich with shredded meat overflowing from a toasted bun, topped with tangy purple coleslaw and pickles. The lighting is warm and rich, highlighting the glistening BBQ sauce. Presented on a rustic dark plate to emphasize the bright colors of the coleslaw." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAy7wlYCjtXopacFNzaidwmRTld4esNMk8WhXhuJxRo5yx-URJ3MhzAuUpxpjlpkclYGIdkisxv79GAqcbzOWvuPLrtu3NFAj1GuGxlofG1kSHmB6zB2cFrLwsrOkgMmC6ltmp3eSveZ5hWyMGG0ow9geMOLndexCPx0dxas5ZYezH6TYZvv9PChQ9j8Gt04-KlRb-hsgH2aUUiBS_L7KHLhbVNPQRWSdAl4LIl_h_AbelG414onv9k')"></div>
+<div class="flex-1 flex flex-col justify-between">
+<div>
+<h4 class="font-label-lg text-label-lg text-on-surface">BBQ Pork Sandwich</h4>
+<p class="text-on-surface-variant text-body-md line-clamp-2 mt-1">Slow-cooked pulled pork with tangy slaw and pickles.</p>
+</div>
+<div class="flex justify-between items-center mt-2">
+<span class="font-headline-sm text-headline-sm text-primary">$11.49</span>
+<button class="bg-primary text-on-primary px-4 py-1.5 rounded-full font-label-lg shadow-sm active:bg-primary-container transition-colors">Add</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Desserts Section -->
+<section id="desserts">
+<h3 class="font-headline-md text-headline-md mb-md flex items-center gap-2">
+<span class="w-1.5 h-6 bg-primary rounded-full"></span>
+                    Desserts
+                </h3>
+<div class="space-y-md">
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-3 flex gap-4 border border-outline-variant/20">
+<div class="w-24 h-24 rounded-lg bg-cover bg-center shrink-0" data-alt="A decadent chocolate lava cake with a molten center spilling out onto a white ceramic plate, served with a scoop of premium vanilla bean ice cream and a fresh mint leaf. Soft, diffused lighting creates a warm, indulgent atmosphere. The chocolate is dark and glossy against the white plate." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDQZrinMp0tkAn8T8DRDS90jEfeBHNP1-q_tUnC9ac_7isJvF70_iZoMuOuBWRQsIypWClibykinnmI9cecZ-itT8I6PDRGIBxkwAsIA50pwE_crCHzVsFFU4KhikH5UvyhlOUyeGnn3bWuvoc9cgFT_8oePIeisP9PK9Jupnsrj0MHLhTvwUJeC7w2Ccl1xKFI_YCZ8gB7Daml1jHCJQgGiH5Do_E049bGL_9nWtTz51Drf5S0IDXg')"></div>
+<div class="flex-1 flex flex-col justify-between">
+<div>
+<h4 class="font-label-lg text-label-lg text-on-surface">Lava Cake</h4>
+<p class="text-on-surface-variant text-body-md line-clamp-2 mt-1">Warm chocolate cake with a molten center and vanilla ice cream.</p>
+</div>
+<div class="flex justify-between items-center mt-2">
+<span class="font-headline-sm text-headline-sm text-primary">$6.99</span>
+<button class="bg-primary text-on-primary px-4 py-1.5 rounded-full font-label-lg shadow-sm active:bg-primary-container transition-colors">Add</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Floating View Cart Bar -->
+<div class="fixed bottom-0 left-0 w-full p-4 z-50 pointer-events-none">
+<div class="max-w-xl mx-auto">
+<button class="pointer-events-auto w-full bg-primary text-on-primary h-14 rounded-xl shadow-2xl flex items-center justify-between px-6 active:scale-[0.98] transition-transform duration-150">
+<div class="flex items-center gap-3">
+<div class="bg-white/20 px-2 py-1 rounded font-bold text-label-lg">2</div>
+<span class="font-headline-sm text-headline-sm">View Cart</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm">$15.99</span>
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</button>
+</div>
+</div>
+<!-- Script for Tab Switching Logic -->
+<script>
+        const tabs = document.querySelectorAll('nav a');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                tabs.forEach(t => {
+                    t.classList.remove('text-primary', 'border-b-2', 'border-primary');
+                    t.classList.add('text-on-surface-variant');
+                });
+                tab.classList.add('text-primary', 'border-b-2', 'border-primary');
+                tab.classList.remove('text-on-surface-variant');
+            });
+        });
+
+        // Simple scroll observer to update tabs
+        window.addEventListener('scroll', () => {
+            const sections = ['starters', 'main', 'desserts', 'beverages'];
+            let current = '';
+            
+            sections.forEach(section => {
+                const element = document.getElementById(section);
+                if (element) {
+                    const rect = element.getBoundingClientRect();
+                    if (rect.top <= 150) {
+                        current = section;
+                    }
+                }
+            });
+
+            if (current) {
+                tabs.forEach(tab => {
+                    tab.classList.remove('text-primary', 'border-b-2', 'border-primary');
+                    tab.classList.add('text-on-surface-variant');
+                    if (tab.getAttribute('href') === `#${current}`) {
+                        tab.classList.add('text-primary', 'border-b-2', 'border-primary');
+                        tab.classList.remove('text-on-surface-variant');
+                    }
+                });
+            }
+        });
+    </script>
+</body></html>

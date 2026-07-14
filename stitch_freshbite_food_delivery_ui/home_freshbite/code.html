@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>FreshBite | High-Velocity Cravings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        @keyframes subtle-zoom {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+        .animate-zoom { animation: subtle-zoom 10s infinite alternate ease-in-out; }
+        
+        .glass-header {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#eec209",
+                        "surface-bright": "#f8f9fa",
+                        "on-secondary-fixed-variant": "#005228",
+                        "background": "#f8f9fa",
+                        "on-surface-variant": "#5c403c",
+                        "surface-container-highest": "#e1e3e4",
+                        "secondary-fixed-dim": "#4ae183",
+                        "on-surface": "#191c1d",
+                        "on-tertiary-fixed-variant": "#574500",
+                        "surface-variant": "#e1e3e4",
+                        "primary": "#b81313",
+                        "surface-tint": "#bb1615",
+                        "primary-fixed-dim": "#ffb4aa",
+                        "tertiary-container": "#cea700",
+                        "surface-container-high": "#e7e8e9",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#6bfe9c",
+                        "primary-container": "#dc3129",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#930006",
+                        "outline-variant": "#e5bdb8",
+                        "secondary": "#006d37",
+                        "on-tertiary-container": "#4e3e00",
+                        "inverse-surface": "#2e3132",
+                        "primary-fixed": "#ffdad5",
+                        "error": "#ba1a1a",
+                        "inverse-primary": "#ffb4aa",
+                        "on-primary-container": "#fffbff",
+                        "surface-dim": "#d9dadb",
+                        "inverse-on-surface": "#f0f1f2",
+                        "on-secondary-container": "#00743a",
+                        "secondary-container": "#6bfe9c",
+                        "outline": "#906f6b",
+                        "error-container": "#ffdad6",
+                        "surface": "#f8f9fa",
+                        "surface-container": "#edeeef",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#410001",
+                        "tertiary": "#735c00",
+                        "tertiary-fixed": "#ffe084",
+                        "on-secondary-fixed": "#00210c",
+                        "on-tertiary-fixed": "#231b00",
+                        "surface-container-low": "#f3f4f5",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#191c1d",
+                        "surface-container-lowest": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "4px",
+                        "gutter": "16px",
+                        "xl": "32px",
+                        "margin-mobile": "16px",
+                        "md": "16px",
+                        "sm": "8px",
+                        "lg": "24px",
+                        "margin-desktop": "48px",
+                        "xs": "4px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "display": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "display-mobile": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "display": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "display-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "800"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-sm": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-surface font-body-lg text-on-surface antialiased selection:bg-primary/20">
+<!-- Top AppBar (Sticky Header) -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-xl shadow-sm">
+<div class="flex flex-col w-full max-w-7xl mx-auto px-margin-mobile py-sm gap-2">
+<div class="flex justify-between items-center w-full">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="location_on">location_on</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-[10px] text-on-surface-variant leading-none">Deliver to</span>
+<span class="font-label-lg text-label-lg flex items-center gap-0.5">123 Maple St <span class="material-symbols-outlined text-xs">expand_more</span></span>
+</div>
+</div>
+<h1 class="font-display text-display-mobile font-extrabold text-primary tracking-tight hidden md:block">FreshBite</h1>
+<div class="flex items-center gap-4">
+<div class="relative active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-on-surface" data-icon="shopping_cart">shopping_cart</span>
+<span class="absolute -top-1.5 -right-1.5 bg-primary text-on-primary text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center">3</span>
+</div>
+</div>
+</div>
+<!-- Search Bar -->
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" data-icon="search">search</span>
+<input class="w-full h-10 pl-10 pr-4 bg-surface-container-low rounded-lg border-none focus:ring-2 focus:ring-primary/20 text-body-md placeholder:text-on-surface-variant/60" placeholder="Search for food, restaurants..." type="text"/>
+</div>
+</div>
+</header>
+<main class="pt-[110px] pb-24 max-w-7xl mx-auto">
+<!-- Hero Banner Carousel -->
+<section class="px-margin-mobile mb-xl overflow-hidden relative">
+<div class="relative w-full aspect-[21/9] rounded-xl overflow-hidden shadow-sm group">
+<div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent z-10 flex flex-col justify-center px-6">
+<span class="bg-primary text-on-primary font-label-sm px-2 py-0.5 rounded-full w-fit mb-2">LIMITED OFFER</span>
+<h2 class="text-white font-display text-display-mobile mb-1">50% Off Pizza</h2>
+<p class="text-white/80 font-body-md max-w-[200px]">Grab the hottest slices in town before they're gone.</p>
+</div>
+<div class="w-full h-full animate-zoom" data-alt="A cinematic, high-angle close-up of a rustic pepperoni pizza with bubbling golden mozzarella cheese and fresh basil leaves, resting on a wooden board. The lighting is warm and dramatic, highlighting the texture of the crust and the steam rising. The background is a blurred artisan kitchen setting with warm wooden tones, echoing the FreshBite brand identity of appetite appeal and high-quality freshness." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD3qAUcITXkYBCysPAPDyYD-1G0_0tjT-4RYqMRZD18inuDtytsbEZl3JRiOXKKVYAC_QURLPOA8W_-qsPKbQedePAsUcQkvkFdPDDVmUafGJswICD_wSJeAdfoe4XniBg7m-cS1iuT3ZMpGEwcV7kXnVPKH0lvMEVHBtGTixjk-oWLZiN3RMrF4s9IGF2SIz29wPUATLbTpbZEU2VzftTdPiGTuCsd4zo_TOffntIIxLm8c2VWZ0G2')"></div>
+<div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
+<div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-white/40"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-white/40"></div>
+</div>
+</div>
+</section>
+<!-- Categories -->
+<section class="mb-xl">
+<div class="flex items-center justify-between px-margin-mobile mb-md">
+<h3 class="font-headline-sm text-headline-sm">Cravings</h3>
+<button class="text-primary font-label-lg">View All</button>
+</div>
+<div class="flex overflow-x-auto hide-scrollbar gap-gutter px-margin-mobile">
+<div class="flex flex-col items-center gap-2 shrink-0 group active:scale-95 transition-transform">
+<div class="w-16 h-16 rounded-full bg-surface-container shadow-sm flex items-center justify-center p-2.5 overflow-hidden group-hover:bg-primary-container/10 transition-colors">
+<img class="w-full h-full object-contain" data-alt="A stylized minimalist icon of a delicious italian pizza slice with vibrant red sauce and melted cheese, isolated on a clean white background with soft shadows, food photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDojFmq8FIht6GQoCtypZ-sYSPSbhpsfWWL70-6KNw-XnaHaBVmcWpnM6R7Wzkikml8TJey2A7w-RoN0wz7cZBGFGeTrGeI0n1YXtJCkHTwjsM4F-SKSEDcfhJ-cpz92c0LVcrnMbJTeub6CBiEt0UzN-14vraiDqK1iTTPpr8360LlkEH8T5NXY1dMjitnb5DQPCsJA2wsEJ2eIm2TdPsSVfVvSStZa-ijBOa6K9T1ET-ypWrkWszH"/>
+</div>
+<span class="font-label-sm text-on-surface">Pizza</span>
+</div>
+<div class="flex flex-col items-center gap-2 shrink-0 group active:scale-95 transition-transform">
+<div class="w-16 h-16 rounded-full bg-surface-container shadow-sm flex items-center justify-center p-2.5 overflow-hidden group-hover:bg-primary-container/10 transition-colors">
+<img class="w-full h-full object-contain" data-alt="A juicy gourmet beef burger with layers of fresh lettuce, tomato, and dripping melted cheddar cheese, photographed in a high-key bright style with professional studio lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzpgqQzT4CwLy9EKof2XvK27XWFGk7V1UtPXtDy1i33FRJvBMQItOHqehddALD1vFlTbZSFHa7nW5PbWZYfB873r1NDAZJc3XmbqxEM7nzF3c-skLYJjNtWxDKUdcDORtwQqj_frbQb1diEDbPzO1U_jH9IV6mLhvg_2HVXKaTX62dj4-yswtVOlcBWnhs_iwIJccRf5xKtgJrpHQ4i1VFaeYEkCF4bqhAp6WrI90sC4Orgpb99Hkm"/>
+</div>
+<span class="font-label-sm text-on-surface">Burgers</span>
+</div>
+<div class="flex flex-col items-center gap-2 shrink-0 group active:scale-95 transition-transform">
+<div class="w-16 h-16 rounded-full bg-surface-container shadow-sm flex items-center justify-center p-2.5 overflow-hidden group-hover:bg-primary-container/10 transition-colors">
+<img class="w-full h-full object-contain" data-alt="A steaming plate of aromatic chicken biryani with long grain basmati rice, garnished with fresh cilantro and golden fried onions, vibrant orange and yellow tones, bright lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuACODlRVjC_lAS51fr-QnBBpf6z1hMm9oJcotAFXnzNuEBvdIt-f68_OwOIrrJQebyTU8tB9ApQNzsAY-Sx96Af2-oqlDiYOPQzxG26ZDDkKSD7gJ26jpGdW6Azyb0XxabG3Z_zDj6rVic5gnYP7vtg5LnPHrdh3b7Q3WNV9lo8AtLzLXQLVGo9pEhXWRxg6gAyulnoL46CMIp5fB_FPg0dehDfCKjbgRctLBQgTHeidEOk83OPqoFg"/>
+</div>
+<span class="font-label-sm text-on-surface">Biryani</span>
+</div>
+<div class="flex flex-col items-center gap-2 shrink-0 group active:scale-95 transition-transform">
+<div class="w-16 h-16 rounded-full bg-surface-container shadow-sm flex items-center justify-center p-2.5 overflow-hidden group-hover:bg-primary-container/10 transition-colors">
+<img class="w-full h-full object-contain" data-alt="A decadent dark chocolate lava cake with a molten center and a dusting of powdered sugar, served on a sleek ceramic plate, vibrant and appetizing dessert photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3ZVZcWzAuZ272IjVyDOUwYDBjR-QIRGojFxSx8aIUaef_KPCangYoz0CEW_W09shhkMEyfFQu21YQfrEp_BK2hmGd2WTHrM2eY79i15hZg77H2O9ZsWV-NZSsQwNzXd-OXzIg1gQr_pOQQQgVG-SZr25t5QGXuUvOz7aRkfv4T5BPpiFYoyEDbiNuttbahHCWGQue_fLvebmWHmY7itOb9lbvGk-tZG7ff35uxLeNBic2hC5NnvSk"/>
+</div>
+<span class="font-label-sm text-on-surface">Desserts</span>
+</div>
+<div class="flex flex-col items-center gap-2 shrink-0 group active:scale-95 transition-transform">
+<div class="w-16 h-16 rounded-full bg-surface-container shadow-sm flex items-center justify-center p-2.5 overflow-hidden group-hover:bg-primary-container/10 transition-colors">
+<img class="w-full h-full object-contain" data-alt="Freshly rolled sushi with bright orange salmon and creamy avocado, served on a dark slate board with ginger and wasabi, vibrant clean aesthetics." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAtyMn_fke9f3GWzFUphYmuTB5n2Qp510NngSMVlBWCLMh8wAkImaKMqBC5Hg6-NcpPHaTxORVbJLmPB7IqxUyLRQBBmPuu-33uj5wYh66IwdPQYDS3YD4LT_KWYsl4DC8ZiWGSSWoePOBpeb_LuRiq9VDAh5L8DQljUwXJEVPTjSB_vXvKMRZSFZCjrtWLTdS2SsnSClG0khZhSEzzthPdqpRxWcmpIdiTVDMrBa9geOmmWlBpZU-"/>
+</div>
+<span class="font-label-sm text-on-surface">Sushi</span>
+</div>
+</div>
+</section>
+<!-- Popular Restaurants -->
+<section class="mb-xl">
+<div class="flex items-center justify-between px-margin-mobile mb-md">
+<h3 class="font-headline-sm text-headline-sm">Popular near you</h3>
+<button class="text-primary font-label-lg">See 42 more</button>
+</div>
+<div class="flex overflow-x-auto hide-scrollbar gap-gutter px-margin-mobile">
+<!-- Restaurant Card 1 -->
+<div class="w-72 shrink-0 bg-surface-container-lowest rounded-xl shadow-[0_4px_16px_rgba(0,0,0,0.06)] overflow-hidden group active:scale-[0.98] transition-transform">
+<div class="h-40 w-full relative">
+<div class="w-full h-full bg-cover bg-center" data-alt="A bright, modern restaurant interior with hanging industrial lights and a vibrant display of fresh ingredients. The atmosphere is energetic and contemporary, with pops of brand red in the decor, high-end food service aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBXJRKs9jkM-fD42VPipqr5xb2Zp6HRkOJ7tCSOOVS4Ix7AqHyWtjPVip6Z3h_dAX_G7qYlF_h-iVBjpx3dRmCJGwHfC6X79KU_FeAY0Meks-J3wrR0HUXw5VIHyB6EKDHCfVe5V-OD8usoZqFDaNDAGv4E1VOBDikUCnkPdANiKk3zq5T3sE1W4cAt5ftyEra683QoGMVVk_0zY48giVEjIAzMi1BlKDzZX2NbVeYaoR6L7L_Vanas')"></div>
+<div class="absolute top-2 left-2 bg-surface-bright/90 backdrop-blur-md px-2 py-0.5 rounded-lg flex items-center gap-1">
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-sm text-on-surface">4.8 (1k+)</span>
+</div>
+<div class="absolute bottom-2 right-2 bg-secondary text-on-secondary font-label-sm px-2 py-0.5 rounded-lg">FREE DELIVERY</div>
+</div>
+<div class="p-3">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-headline-sm text-headline-sm truncate">The Burger House</h4>
+</div>
+<p class="text-on-surface-variant font-body-md text-sm mb-2">American • Burgers • $$</p>
+<div class="flex items-center gap-3 text-on-surface-variant text-[12px]">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> 20-30 min</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>1.2 miles</span>
+</div>
+</div>
+</div>
+<!-- Restaurant Card 2 -->
+<div class="w-72 shrink-0 bg-surface-container-lowest rounded-xl shadow-[0_4px_16px_rgba(0,0,0,0.06)] overflow-hidden group active:scale-[0.98] transition-transform">
+<div class="h-40 w-full relative">
+<div class="w-full h-full bg-cover bg-center" data-alt="An upscale Italian bistro facade with ivy-covered walls and warm sidewalk seating under red umbrellas. The scene is bathed in golden hour sunlight, creating an inviting and premium mood for authentic dining." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAHWn182FqE9yh_-L497WaBIv3ccCEpT_5wMY4C5OU_aUZv3S9y7Vm2ASg0LNx6ixVXsaAOxEBOxaKysrt8xQ5zuk6Gx6DwODvhHwg08VB1jT_-Af7edX_QQ510WNvUf3pAa4kpqg_14yrfU1O-JUInlZ09ep1LFW4NW3OmOsu-7fBCmg0-aC0SvR_Z-0UY2CAi8FuYorNiX8oPT9emaxG0dNvLRBlSbgFlHD6MsJd3ItWeDY5Nz2Ak')"></div>
+<div class="absolute top-2 left-2 bg-surface-bright/90 backdrop-blur-md px-2 py-0.5 rounded-lg flex items-center gap-1">
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-sm text-on-surface">4.5 (500+)</span>
+</div>
+<div class="absolute bottom-2 right-2 bg-primary text-on-primary font-label-sm px-2 py-0.5 rounded-lg">PROMO</div>
+</div>
+<div class="p-3">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-headline-sm text-headline-sm truncate">Luigi's Kitchen</h4>
+</div>
+<p class="text-on-surface-variant font-body-md text-sm mb-2">Italian • Pasta • $$$</p>
+<div class="flex items-center gap-3 text-on-surface-variant text-[12px]">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> 35-45 min</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>2.5 miles</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Best Sellers Grid -->
+<section class="px-margin-mobile mb-xl">
+<h3 class="font-headline-sm text-headline-sm mb-md">Best Sellers</h3>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<!-- Food Item 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-2 shadow-sm border border-outline-variant/20 flex flex-col h-full">
+<div class="aspect-square w-full rounded-lg overflow-hidden mb-2">
+<img class="w-full h-full object-cover" data-alt="A top-down view of a classic margherita pizza with fresh mozzarella pearls, vibrant red tomato sauce, and bright green basil leaves. The crust is perfectly charred and leopard-spotted, shot on a minimalist white background, soft lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgdG9_U5ev7Iwo5RA6xMY_w3-qjRkb_H-LGCaqfo9F3OuXV5R-HrIoZAm6l_6xHiDkd--H9Lbr8ONPAgEJ6P10aculHCzRgT4qBJrglWazatqHBXAYX2gxuTmSeihK56UticHKAQDzS3JJlktXmW-R9xGH62UG0c9ExZ47nkYq77VnwjF3G3yLlFi29XFRb-pocFXpio5D_S7vFScZs8bpPZj7h8fLq34MQpmvx4lC2EqQhhSZzzRM"/>
+</div>
+<div class="flex flex-col flex-grow">
+<h5 class="font-label-lg text-on-surface line-clamp-1">Classic Margherita</h5>
+<p class="text-on-surface-variant font-label-sm mb-2">Thin crust, fresh basil</p>
+<div class="mt-auto flex items-center justify-between">
+<span class="font-bold text-primary">$12.99</span>
+<button class="bg-primary hover:bg-primary-container text-on-primary rounded-lg p-1.5 flex items-center justify-center active:scale-90 transition-all">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Food Item 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-2 shadow-sm border border-outline-variant/20 flex flex-col h-full">
+<div class="aspect-square w-full rounded-lg overflow-hidden mb-2">
+<img class="w-full h-full object-cover" data-alt="A close-up of crispy, golden-brown chicken wings coated in a shiny, spicy buffalo glaze, served with a side of creamy ranch dressing and fresh celery sticks. The image is bright and vibrant, emphasizing the texture and appetizing quality of the sauce." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0AnuN0m3LmFCJRSlnTRDPrfgoLrb47Wnb5K9yuQsk5jHSrbJXgDMShlSf16RqVPUuJjSsSZFc1e0EzUTZWYVIzaNhdS2HNeu0DZ_qw6R9r-gRrl5oG9shyzV96r-nWUpSM9TmR19v0VqMIAcTux5IV7Lq5PXQFjbKsR-CSxstHzfjMVX_nzlfgy1U-sL6iXPWhxDUACjdTriZGh_SDtXa7e2EyqAgUTAx6-tGO_0tIeq0gteRucfm"/>
+</div>
+<div class="flex flex-col flex-grow">
+<h5 class="font-label-lg text-on-surface line-clamp-1">Spicy Buffalo Wings</h5>
+<p class="text-on-surface-variant font-label-sm mb-2">6pcs with dip</p>
+<div class="mt-auto flex items-center justify-between">
+<span class="font-bold text-primary">$9.50</span>
+<button class="bg-primary hover:bg-primary-container text-on-primary rounded-lg p-1.5 flex items-center justify-center active:scale-90 transition-all">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Food Item 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-2 shadow-sm border border-outline-variant/20 flex flex-col h-full">
+<div class="aspect-square w-full rounded-lg overflow-hidden mb-2">
+<img class="w-full h-full object-cover" data-alt="A colorful bowl of fresh ramen noodles submerged in a rich, golden miso broth, topped with a soft-boiled egg, sliced green onions, nori, and succulent pork belly. The lighting is clean and professional, highlighting the steam and freshness." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIPLOj6YM8DvSRNUkAzY_c-soo5itZp_hdwREAojEOLvwqvWeEWq09eb7s0FpmMQ9ODw3HMllOwhnh8Hm-ihLsa06BikkdmBvLRR_wxNHWteCtLXH9a7KyH7Pq37v2neOb9a48cKhqNpnYotz20tFCCbalrg8QkcLZmN9KETrOninA1Sy-mUHeyaU2d8cZPhod8lGTaY6mgAM23IjCzoH1R1NfLVf7CSTdn7OZzdaxJLm4TZSmn087"/>
+</div>
+<div class="flex flex-col flex-grow">
+<h5 class="font-label-lg text-on-surface line-clamp-1">Miso Ramen Special</h5>
+<p class="text-on-surface-variant font-label-sm mb-2">Authentic broth</p>
+<div class="mt-auto flex items-center justify-between">
+<span class="font-bold text-primary">$15.00</span>
+<button class="bg-primary hover:bg-primary-container text-on-primary rounded-lg p-1.5 flex items-center justify-center active:scale-90 transition-all">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Food Item 4 -->
+<div class="bg-surface-container-lowest rounded-xl p-2 shadow-sm border border-outline-variant/20 flex flex-col h-full">
+<div class="aspect-square w-full rounded-lg overflow-hidden mb-2">
+<img class="w-full h-full object-cover" data-alt="A fresh, vibrant Greek salad with blocks of feta cheese, kalamata olives, crisp cucumbers, cherry tomatoes, and red onions, drizzled with olive oil and oregano. Bright, high-key lighting creates a fresh and healthy food-mode atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJhdVw44YkNZyonRKq3rtr7UvZp11HRzHgnGpisjC2E8UKjltVZrUeKwcHU2am58A4Og0bZmm3FfGsdFefzAS0LwWVVLGm9xvOryLki0jHCuQk72G55RRiut6lVxXIgnczjpJniaglhYAYHcbXpEwRd-LikoNYUeNe3R9C1mjGRve5pkdR4JA47ZB6bFCVZuZjcI6wFCRPmr_aF80TNSWAnpSFJB2VPMv5n-RyGv40y76xD7wP8yeG"/>
+</div>
+<div class="flex flex-col flex-grow">
+<h5 class="font-label-lg text-on-surface line-clamp-1">Garden Fresh Salad</h5>
+<p class="text-on-surface-variant font-label-sm mb-2">Organic greens</p>
+<div class="mt-auto flex items-center justify-between">
+<span class="font-bold text-primary">$11.20</span>
+<button class="bg-primary hover:bg-primary-container text-on-primary rounded-lg p-1.5 flex items-center justify-center active:scale-90 transition-all">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Bento Grid Highlight -->
+<section class="px-margin-mobile mb-xl">
+<div class="grid grid-cols-2 grid-rows-2 gap-3 h-[240px]">
+<div class="col-span-1 row-span-2 bg-tertiary-fixed-dim/20 rounded-2xl p-4 flex flex-col justify-between overflow-hidden relative border border-tertiary-fixed-dim/30">
+<div class="z-10">
+<h4 class="font-headline-sm text-headline-sm text-on-tertiary-fixed-variant">Win-Win Weekends</h4>
+<p class="font-body-md text-xs text-on-tertiary-fixed-variant">Double rewards on all pizza orders today!</p>
+</div>
+<button class="z-10 w-fit bg-on-tertiary-fixed-variant text-surface px-4 py-1.5 rounded-full text-xs font-bold active:scale-95 transition-all">Join Now</button>
+<span class="material-symbols-outlined absolute -bottom-4 -right-4 text-8xl text-on-tertiary-fixed-variant/10 rotate-12">local_pizza</span>
+</div>
+<div class="col-span-1 row-span-1 bg-secondary-container/30 rounded-2xl p-4 flex items-center justify-between border border-secondary-container/50">
+<div>
+<h4 class="font-label-lg text-on-secondary-container">Flash Sale</h4>
+<p class="text-[10px] text-on-secondary-container opacity-80">Burgers from $4.99</p>
+</div>
+<span class="material-symbols-outlined text-secondary text-2xl">bolt</span>
+</div>
+<div class="col-span-1 row-span-1 bg-primary-container/10 rounded-2xl p-4 flex items-center justify-between border border-primary-container/20">
+<div>
+<h4 class="font-label-lg text-primary">New Arrivals</h4>
+<p class="text-[10px] text-primary opacity-80">Explore fresh spots</p>
+</div>
+<span class="material-symbols-outlined text-primary text-2xl">restaurant</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 w-full z-50 bg-surface dark:bg-surface-dim shadow-[0_-4px_16px_rgba(0,0,0,0.12)] rounded-t-xl md:hidden">
+<div class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-2 pb-safe">
+<!-- Home (Active) -->
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim bg-primary-container/20 rounded-xl px-3 py-1 active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</a>
+<!-- Search -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">search</span>
+<span class="font-label-sm text-label-sm">Search</span>
+</a>
+<!-- Orders -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label-sm text-label-sm">Orders</span>
+</a>
+<!-- Cart -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">shopping_bag</span>
+<span class="font-label-sm text-label-sm">Cart</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</a>
+</div>
+</nav>
+<!-- Floating Action Button (FAB) - For quick access to cart or re-order -->
+<button class="fixed bottom-24 right-4 z-40 bg-primary text-on-primary w-14 h-14 rounded-2xl shadow-xl flex items-center justify-center active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-2xl">local_mall</span>
+</button>
+<script>
+        // Simple micro-interactions and scroll handling
+        document.addEventListener('DOMContentLoaded', () => {
+            const header = document.querySelector('header');
+            let lastScroll = 0;
+
+            window.addEventListener('scroll', () => {
+                const currentScroll = window.pageYOffset;
+                if (currentScroll > 50) {
+                    header.classList.add('glass-header');
+                } else {
+                    header.classList.remove('glass-header');
+                }
+                lastScroll = currentScroll;
+            });
+
+            // Smooth horizontal scroll for categories and restaurants
+            const scrolls = document.querySelectorAll('.hide-scrollbar');
+            scrolls.forEach(el => {
+                el.addEventListener('wheel', (evt) => {
+                    evt.preventDefault();
+                    el.scrollLeft += evt.deltaY;
+                });
+            });
+        });
+    </script>
+</body></html>
