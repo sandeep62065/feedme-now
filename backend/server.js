@@ -26,7 +26,7 @@ const app = express();
 app.use(helmet());
 
 const allowedOrigins = [
-  'http://localhost:5173',
+  'http://feedme-now-bfo2.vercel.app',
   'http://127.0.0.1:5173',
   'https://feedme-now.vercel.app',
   process.env.FRONTEND_URL,
@@ -59,7 +59,7 @@ app.use(errorHandler);
 if (process.env.NODE_ENV === 'production') {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
-  
+
   // Set static folder
   app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
