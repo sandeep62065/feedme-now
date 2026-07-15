@@ -30,6 +30,7 @@ app.use(helmet());
 
 const allowedOrigins = [
   'http://feedme-now-bfo2.vercel.app',
+  'https://feedme-now-bfo2.vercel.app',   // ✅ https required on Vercel
   'http://127.0.0.1:5173',
   'http://localhost:5173',
   'https://feedme-now.vercel.app',
