@@ -1,37 +1,35 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
+/**
+ * Protect routes — verifies the short-lived access token from
+ * the Authorization: Bearer <token> header.
+ */
 export const protect = async (req, res, next) => {
-  let token;
-
-  // Read JWT from header or cookies
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    token = req.headers.authorization.split(' ')[1];
-  } else if (req.cookies && req.cookies.token) {
-    token = req.cookies.token;
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Not authenticated. No token provided.' });
   }
 
-  if (!token) {
-    return res.status(401).json({ success: false, message: 'Not authorized, no token provided' });
-  }
-
+  const token = auth.split(' ')[1];
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret_key');
-    req.user = await User.findById(decoded.id).select('-password');
+    const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+    req.user = await User.findById(decoded.id).select('-password -refreshToken');
     if (!req.user) {
-      return res.status(401).json({ success: false, message: 'Not authorized, user not found' });
+      return res.status(401).json({ message: 'User not found.' });
     }
     next();
-  } catch (error) {
-    console.error('JWT Verification Error:', error);
-    return res.status(401).json({ success: false, message: 'Not authorized, token failed' });
+  } catch (err) {
+    return res.status(401).json({ message: 'Invalid or expired token.' });
   }
 };
 
-export const admin = (req, res, next) => {
-  if (req.user && req.user.role === 'admin') {
-    next();
-  } else {
-    return res.status(403).json({ success: false, message: 'Forbidden, admin access required' });
+/**
+ * Admin-only gate — must be used AFTER protect middleware.
+ */
+export const adminOnly = (req, res, next) => {
+  if (req.user?.role !== 'admin') {
+    return res.status(403).json({ message: 'Access denied. Admins only.' });
   }
+  next();
 };

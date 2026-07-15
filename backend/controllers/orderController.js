@@ -1,153 +1,106 @@
 import Order from '../models/Order.js';
-import Cart from '../models/Cart.js';
-import Food from '../models/Food.js';
-import Restaurant from '../models/Restaurant.js';
-import Coupon from '../models/Coupon.js';
+import MenuItem from '../models/MenuItem.js';
 
-// @desc    Create a new order
-// @route   POST /api/orders
-// @access  Private
-export const createOrder = async (req, res, next) => {
-  const { deliveryAddress, paymentMethod, couponCode } = req.body;
+/**
+ * POST /api/orders   (protected)
+ * Re-fetches real prices from DB — never trusts client-supplied prices.
+ */
+export const placeOrder = async (req, res) => {
+  const { items, deliveryAddress, notes } = req.body;
 
-  try {
-    // 1. Get the user's cart
-    const cart = await Cart.findOne({ user: req.user._id }).populate('items.food');
-    if (!cart || cart.items.length === 0) {
-      return res.status(400).json({ success: false, message: 'Cart is empty' });
-    }
-
-    // 2. Group items by restaurant to ensure we check restaurant details
-    // For simplicity, we assume single order comes from one restaurant at a time.
-    // If cart contains multiple restaurants, we can resolve delivery details from the first item's restaurant.
-    const firstItem = cart.items[0];
-    const restaurantId = firstItem.food.restaurant;
-    const restaurant = await Restaurant.findById(restaurantId);
-
-    if (!restaurant) {
-      return res.status(404).json({ success: false, message: 'Restaurant not found' });
-    }
-
-    // 3. Recalculate subtotal on server based on current database prices (never trust client)
-    let subtotal = 0;
-    const orderItems = [];
-
-    for (const item of cart.items) {
-      const foodItem = await Food.findById(item.food._id);
-      if (!foodItem || foodItem.status !== 'available') {
-        return res.status(400).json({
-          success: false,
-          message: `Food item "${item.food.name}" is no longer available.`
-        });
-      }
-      
-      const itemPrice = foodItem.price;
-      subtotal += itemPrice * item.quantity;
-
-      orderItems.push({
-        food: foodItem._id,
-        quantity: item.quantity,
-        priceAtOrder: itemPrice,
-        nameAtOrder: foodItem.name,
-        imageAtOrder: foodItem.image
-      });
-    }
-
-    // 4. Calculate Taxes and Delivery Fee
-    const gst = Math.round((subtotal * 0.05) * 100) / 100; // 5% GST
-    let deliveryFee = restaurant.deliveryFee || 0;
-    if (subtotal > 500) {
-      deliveryFee = 0; // Free delivery over 500
-    }
-
-    let finalTotal = subtotal + gst + deliveryFee;
-
-    // 5. Apply coupon code if provided
-    let appliedDiscount = 0;
-    if (couponCode) {
-      const coupon = await Coupon.findOne({ code: couponCode, active: true });
-      if (coupon && (!coupon.expiryDate || new Date() <= new Date(coupon.expiryDate))) {
-        if (subtotal >= coupon.minOrderValue) {
-          if (coupon.discountType === 'percentage') {
-            appliedDiscount = subtotal * (coupon.discountValue / 100);
-            if (coupon.maxDiscountAmount && appliedDiscount > coupon.maxDiscountAmount) {
-              appliedDiscount = coupon.maxDiscountAmount;
-            }
-          } else {
-            appliedDiscount = coupon.discountValue;
-          }
-          finalTotal -= appliedDiscount;
-        }
-      }
-    }
-
-    finalTotal = Math.max(0, Math.round(finalTotal * 100) / 100);
-
-    // 6. Create the order
-    const order = await Order.create({
-      user: req.user._id,
-      restaurant: restaurantId,
-      items: orderItems,
-      deliveryAddress,
-      paymentMethod,
-      paymentStatus: paymentMethod === 'Card' ? 'Paid' : 'Pending',
-      orderStatus: 'Placed',
-      subtotal,
-      deliveryFee,
-      gst,
-      total: finalTotal
-    });
-
-    // 7. Clear the user's cart
-    cart.items = [];
-    await cart.save();
-
-    res.status(201).json({
-      success: true,
-      message: 'Order placed successfully',
-      order
-    });
-  } catch (error) {
-    next(error);
+  if (!items || !Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ message: 'Order must contain at least one item.' });
   }
+  if (!deliveryAddress?.formattedAddress) {
+    return res.status(400).json({ message: 'Delivery address is required.' });
+  }
+
+  // Re-validate items and compute real total server-side
+  const orderItems = [];
+  let totalAmount = 0;
+
+  for (const clientItem of items) {
+    const menuItem = await MenuItem.findById(clientItem.menuItemId);
+    if (!menuItem) {
+      return res.status(400).json({ message: `Menu item not found: ${clientItem.menuItemId}` });
+    }
+    if (!menuItem.isAvailable) {
+      return res.status(400).json({ message: `"${menuItem.name}" is currently unavailable.` });
+    }
+    const qty = Math.max(1, parseInt(clientItem.quantity) || 1);
+    totalAmount += menuItem.price * qty;
+    orderItems.push({
+      menuItem: menuItem._id,
+      name: menuItem.name,
+      price: menuItem.price,        // server-fetched price
+      image: menuItem.image,
+      quantity: qty,
+    });
+  }
+
+  const order = await Order.create({
+    user: req.user._id,
+    items: orderItems,
+    totalAmount: Math.round(totalAmount * 100) / 100,
+    deliveryAddress,
+    notes: notes || '',
+  });
+
+  res.status(201).json({ order });
 };
 
-// @desc    Get logged in user's orders
-// @route   GET /api/orders
-// @access  Private
-export const getMyOrders = async (req, res, next) => {
-  try {
-    const orders = await Order.find({ user: req.user._id })
-      .populate('restaurant', 'name image address')
-      .sort({ createdAt: -1 });
-
-    res.json({ success: true, orders });
-  } catch (error) {
-    next(error);
-  }
+/**
+ * GET /api/orders   (protected — current user's orders)
+ */
+export const getMyOrders = async (req, res) => {
+  const orders = await Order.find({ user: req.user._id })
+    .sort({ createdAt: -1 })
+    .limit(50);
+  res.json({ orders });
 };
 
-// @desc    Get order by ID
-// @route   GET /api/orders/:id
-// @access  Private
-export const getOrderById = async (req, res, next) => {
-  const { id } = req.params;
-  try {
-    const order = await Order.findById(id)
-      .populate('restaurant', 'name image address deliveryTime')
-      .populate('user', 'name email');
+/**
+ * GET /api/orders/:id   (protected — owner or admin)
+ */
+export const getOrder = async (req, res) => {
+  const order = await Order.findById(req.params.id);
+  if (!order) return res.status(404).json({ message: 'Order not found.' });
 
-    if (!order) {
-      return res.status(404).json({ success: false, message: 'Order not found' });
-    }
-
-    // Check if the order belongs to the user or the user is an admin
-    if (order.user._id.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
-      return res.status(403).json({ success: false, message: 'Not authorized to view this order' });
-    }
-
-    res.json({ success: true, order });
-  } catch (error) {
-    next(error);
+  const isOwner = order.user.toString() === req.user._id.toString();
+  const isAdmin = req.user.role === 'admin';
+  if (!isOwner && !isAdmin) {
+    return res.status(403).json({ message: 'Access denied.' });
   }
+
+  res.json({ order });
+};
+
+/**
+ * PATCH /api/orders/:id/status   (admin only)
+ */
+export const updateOrderStatus = async (req, res) => {
+  const { status } = req.body;
+  const valid = ['placed', 'preparing', 'out_for_delivery', 'delivered', 'cancelled'];
+  if (!valid.includes(status)) {
+    return res.status(400).json({ message: `Invalid status. Must be one of: ${valid.join(', ')}` });
+  }
+
+  const order = await Order.findByIdAndUpdate(
+    req.params.id,
+    { status },
+    { new: true }
+  );
+  if (!order) return res.status(404).json({ message: 'Order not found.' });
+  res.json({ order });
+};
+
+/**
+ * GET /api/orders/all   (admin only)
+ */
+export const getAllOrders = async (req, res) => {
+  const orders = await Order.find()
+    .populate('user', 'name email')
+    .sort({ createdAt: -1 })
+    .limit(200);
+  res.json({ orders });
 };

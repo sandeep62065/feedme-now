@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { fetchRestaurants, fetchCategories } from '../../store/slices/restaurantSlice';
-import { fetchFoods, setSelectedCategory, toggleVegOnly } from '../../store/slices/foodSlice';
+import { useNavigate, Link } from 'react-router-dom';
+import { fetchRestaurants } from '../../store/slices/restaurantSlice';
+import { fetchFoods, fetchCategories, setSelectedCategory, toggleVegOnly } from '../../store/slices/foodSlice';
+import toast from 'react-hot-toast';
 import RestaurantCard from '../../components/RestaurantCard';
 import FoodCard from '../../components/FoodCard';
 import LoadingSkeleton from '../../components/LoadingSkeleton';

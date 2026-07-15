@@ -1,213 +1,74 @@
-import mongoose from 'mongoose';
+/**
+ * Seed script — populates the tastybite DB with sample menu items.
+ * Run: npm run seed
+ */
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+import MenuItem from './models/MenuItem.js';
 import User from './models/User.js';
-import Category from './models/Category.js';
-import Restaurant from './models/Restaurant.js';
-import Food from './models/Food.js';
-import Cart from './models/Cart.js';
-import Order from './models/Order.js';
-import Coupon from './models/Coupon.js';
 
 dotenv.config();
 
-const categoriesData = [
-  {
-    name: 'Pizza',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDojFmq8FIht6GQoCtypZ-sYSPSbhpsfWWL70-6KNw-XnaHaBVmcWpnM6R7Wzkikml8TJey2A7w-RoN0wz7cZBGFGeTrGeI0n1YXtJCkHTwjsM4F-SKSEDcfhJ-cpz92c0LVcrnMbJTeub6CBiEt0UzN-14vraiDqK1iTTPpr8360LlkEH8T5NXY1dMjitnb5DQPCsJA2wsEJ2eIm2TdPsSVfVvSStZa-ijBOa6K9T1ET-ypWrkWszH'
-  },
-  {
-    name: 'Burgers',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCzpgqQzT4CwLy9EKof2XvK27XWFGk7V1UtPXtDy1i33FRJvBMQItOHqehddALD1vFlTbZSFHa7nW5PbWZYfB873r1NDAZJc3XmbqxEM7nzF3c-skLYJjNtWxDKUdcDORtwQqj_frbQb1diEDbPzO1U_jH9IV6mLhvg_2HVXKaTX62dj4-yswtVOlcBWnhs_iwIJccRf5xKtgJrpHQ4i1VFaeYEkCF4bqhAp6WrI90sC4Orgpb99Hkm'
-  },
-  {
-    name: 'Biryani',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuACODlRVjC_lAS51fr-QnBBpf6z1hMm9oJcotAFXnzNuEBvdIt-f68_OwOIrrJQebyTU8tB9ApQNzsAY-Sx96Af2-oqlDiYOPQzxG26ZDDkKSD7gJ26jpGdW6Azyb0XxabG3Z_zDj6rVic5gnYP7vtg5LnPHrdh3b7Q3WNV9lo8AtLzLXQLVGo9pEhXWRxg6gAyulnoL46CMIp5fB_FPg0dehDfCKjbgRctLBQgTHeidEOk83OPqoFg'
-  },
-  {
-    name: 'Desserts',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD3ZVZcWzAuZ272IjVyDOUwYDBjR-QIRGojFxSx8aIUaef_KPCangYoz0CEW_W09shhkMEyfFQu21YQfrEp_BK2hmGd2WTHrM2eY79i15hZg77H2O9ZsWV-NZSsQwNzXd-OXzIg1gQr_pOQQQgVG-SZr25t5QGXuUvOz7aRkfv4T5BPpiFYoyEDbiNuttbahHCWGQue_fLvebmWHmY7itOb9lbvGk-tZG7ff35uxLeNBic2hC5NnvSk'
-  }
+const menuItems = [
+  // Burgers
+  { name: 'Classic Smash Burger', description: 'Double smashed beef patty, American cheese, pickles, special sauce on a brioche bun.', price: 199, category: 'Burgers', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600', isVeg: false, isAvailable: true, tags: ['bestseller', 'beef'] },
+  { name: 'Crispy Chicken Burger', description: 'Buttermilk fried chicken thigh, coleslaw, jalapeños, honey sriracha mayo.', price: 179, category: 'Burgers', image: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=600', isVeg: false, isAvailable: true, tags: ['spicy', 'chicken'] },
+  { name: 'Mushroom Swiss Veggie Burger', description: 'House-made black bean patty, sautéed mushrooms, Swiss cheese, arugula.', price: 159, category: 'Burgers', image: 'https://images.unsplash.com/photo-1520072959219-c595dc870360?w=600', isVeg: true, isAvailable: true, tags: ['veg', 'healthy'] },
+
+  // Pizza
+  { name: 'Margherita Pizza', description: 'San Marzano tomato base, fresh mozzarella, basil, extra virgin olive oil.', price: 249, category: 'Pizza', image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=600', isVeg: true, isAvailable: true, tags: ['classic', 'veg'] },
+  { name: 'Pepperoni Feast Pizza', description: 'Loaded with crispy pepperoni, mozzarella, roasted red peppers on a thin crust.', price: 299, category: 'Pizza', image: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=600', isVeg: false, isAvailable: true, tags: ['bestseller', 'meat'] },
+  { name: 'BBQ Chicken Pizza', description: 'Smoky BBQ sauce, grilled chicken, caramelized onions, cilantro.', price: 279, category: 'Pizza', image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600', isVeg: false, isAvailable: true, tags: ['bbq', 'chicken'] },
+
+  // Sandwiches
+  { name: 'Club Sandwich', description: 'Triple-decker with turkey, bacon, lettuce, tomato, cheddar, mayo on toasted bread.', price: 149, category: 'Sandwiches', image: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600', isVeg: false, isAvailable: true, tags: ['classic'] },
+  { name: 'Grilled Paneer Wrap', description: 'Spiced paneer tikka, green chutney, onions, bell peppers in a whole wheat tortilla.', price: 129, category: 'Sandwiches', image: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600', isVeg: true, isAvailable: true, tags: ['veg', 'wrap'] },
+
+  // Sides
+  { name: 'Loaded Cheese Fries', description: 'Thick-cut fries smothered in nacho cheese, jalapeños, sour cream, chives.', price: 99, category: 'Sides', image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600', isVeg: true, isAvailable: true, tags: ['veg', 'indulgent'] },
+  { name: 'Onion Rings', description: 'Beer-battered golden onion rings with chipotle dip.', price: 79, category: 'Sides', image: 'https://images.unsplash.com/photo-1639024471283-03518883512d?w=600', isVeg: true, isAvailable: true, tags: ['veg', 'crispy'] },
+  { name: 'Chicken Wings (6 pcs)', description: 'Choice of buffalo, BBQ, or garlic parmesan. Served with ranch dip.', price: 199, category: 'Sides', image: 'https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=600', isVeg: false, isAvailable: true, tags: ['chicken', 'spicy'] },
+
+  // Drinks
+  { name: 'Classic Cola', description: 'Ice-cold Coca-Cola, 330ml.', price: 49, category: 'Drinks', image: 'https://images.unsplash.com/photo-1581636625402-29b2a704ef13?w=600', isVeg: true, isAvailable: true, tags: ['cold'] },
+  { name: 'Fresh Lime Soda', description: 'Freshly squeezed lime, sparkling water, mint. Sweet or salted.', price: 59, category: 'Drinks', image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=600', isVeg: true, isAvailable: true, tags: ['fresh', 'cold'] },
+  { name: 'Mango Lassi', description: 'Thick yogurt blended with Alphonso mango pulp, cardamom.', price: 69, category: 'Drinks', image: 'https://images.unsplash.com/photo-1548625149-720754874769?w=600', isVeg: true, isAvailable: true, tags: ['fresh', 'sweet'] },
+
+  // Desserts
+  { name: 'Chocolate Lava Cake', description: 'Warm dark chocolate cake with a molten centre. Served with vanilla ice cream.', price: 119, category: 'Desserts', image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=600', isVeg: true, isAvailable: true, tags: ['sweet', 'chocolate'] },
+  { name: 'Oreo Cheesecake Slice', description: 'Creamy no-bake cheesecake on an Oreo crust, topped with whipped cream.', price: 109, category: 'Desserts', image: 'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=600', isVeg: true, isAvailable: true, tags: ['sweet', 'cold'] },
 ];
 
-const restaurantsData = [
-  {
-    name: 'Burger Blast',
-    description: 'Gourmet double-stacked burgers, loaded fries, and draft milkshakes.',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCJydZnc2Q8Dcipk6MYYZ864Azr-AvgfcTNeMwiPk0fpfh1E6O0VNF8xRToYONhxTYNarfrFICa7bMaJX8zmqReGBfA9MBdxoK3geJ8qUsvfotK0ihfuC6VS0WTbaohZY8UTJ87LRfc2SjPYhK0-9c1VdG43C5SxkPo5vrFtCf92bCAkcSBzwLSXFBOeVQzBHEr41qD28GtKswBCQz64EqtDo81XhPBQPvl47W3i8XEpParK6PEhArK',
-    rating: 4.5,
-    cuisineType: ['Burgers', 'Fast Food'],
-    deliveryTime: '20-30 mins',
-    deliveryFee: 0,
-    address: '456 Burger Avenue, Food District'
-  },
-  {
-    name: 'Pizza Paradise',
-    description: 'Fresh wood-fired artisan pizza with top-tier mozzarella and basil leaves.',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD3qAUcITXkYBCysPAPDyYD-1G0_0tjT-4RYqMRZD18inuDtytsbEZl3JRiOXKKVYAC_QURLPOA8W_-qsPKbQedePAsUcQkvkFdPDDVmUafGJswICD_wSJeAdfoe4XniBg7m-cS1iuT3ZMpGEwcV7kXnVPKH0lvMEVHBtGTixjk-oWLZiN3RMrF4s9IGF2SIz29wPUATLbTpbZEU2VzftTdPiGTuCsd4zo_TOffntIIxLm8c2VWZ0G2',
-    rating: 4.7,
-    cuisineType: ['Pizza', 'Italian'],
-    deliveryTime: '25-35 mins',
-    deliveryFee: 30,
-    address: '789 Pepperoni Street, Little Italy'
-  }
-];
-
-const seedDB = async () => {
-  try {
-    const mongoURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/freshbite';
-    console.log(`Connecting to database at ${mongoURI}...`);
-    await mongoose.connect(mongoURI);
-
-    // 1. Clear existing database collections
-    console.log('Clearing database collections...');
-    await User.deleteMany({});
-    await Category.deleteMany({});
-    await Restaurant.deleteMany({});
-    await Food.deleteMany({});
-    await Cart.deleteMany({});
-    await Order.deleteMany({});
-    await Coupon.deleteMany({});
-
-    // 2. Create Default Users (Customer and Admin)
-    console.log('Seeding users...');
-    const adminUser = await User.create({
-      name: 'FreshBite Admin',
-      email: 'admin@freshbite.com',
-      password: 'admin123', // Will be hashed via pre-save hooks
-      role: 'admin'
-    });
-
-    const customerUser = await User.create({
-      name: 'John Doe',
-      email: 'user@freshbite.com',
-      password: 'user123', // Will be hashed via pre-save hooks
-      role: 'customer',
-      addresses: [
-        {
-          street: '123 Maple St',
-          city: 'New York',
-          state: 'NY',
-          zipCode: '10001',
-          isDefault: true
-        }
-      ]
-    });
-
-    console.log(`Users seeded. Admin: ${adminUser.email}, Customer: ${customerUser.email}`);
-
-    // 3. Seed Categories
-    console.log('Seeding categories...');
-    const seededCategories = await Category.insertMany(categoriesData);
-    const pizzaCategory = seededCategories.find(c => c.name === 'Pizza');
-    const burgerCategory = seededCategories.find(c => c.name === 'Burgers');
-    const dessertCategory = seededCategories.find(c => c.name === 'Desserts');
-
-    // 4. Seed Restaurants
-    console.log('Seeding restaurants...');
-    const seededRestaurants = await Restaurant.insertMany(restaurantsData);
-    const burgerBlast = seededRestaurants.find(r => r.name === 'Burger Blast');
-    const pizzaParadise = seededRestaurants.find(r => r.name === 'Pizza Paradise');
-
-    // 5. Seed Foods
-    console.log('Seeding food menu items...');
-    const foodsData = [
-      {
-        name: 'Cheese Burger',
-        description: 'Double beef patty, melting cheddar cheese, fresh lettuce, and toasted brioche bun.',
-        price: 199,
-        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBoXEgIE2sudcKx8qi0FzWbJgKRGws4lO9Wo6FUEYO9fL8R5oz2B2Ft0uvsFwQhhhueAENBk2_KhqMcDFs5mVAgMGAAOHZy3M2uXYq0eMAkFC9wMUauqbcAcUHIBoLbRB6T9UEOkvhsmP7l3HX5dVRTBT6JhFgVvbxjkflKX_ngoCIjocqM3rhz-IvWVVy7WckTJcWJCWU0wRhv8Oeh8XGrrWE4B-gAduza-1F_s8rNzZMgk97KG9_l',
-        category: burgerCategory._id,
-        restaurant: burgerBlast._id,
-        isVeg: false,
-        rating: 4.6
-      },
-      {
-        name: 'French Fries',
-        description: 'Crispy golden french fries tossed with sea salt and fresh herbs.',
-        price: 99,
-        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBqR6xlLANMGD9krBF6V-8ECOhIP9zPCSYSFXh-RLxHKFZmtj9TF563TM6Dp0-t_He3TDCwVEhzmxvyGDCBJDQPQSik8PUuxQV0i3j1UIJDB6pBWEwU5erhcl8ExdKP9M87UFMsObtlBqxgRnfXGIz4zSmS3zaBX-rf7xz0wMbqzkxzxtU-NnOR-MyNYNu0ApqqvQev6KcMV2P7K93OA3E5dtykIJa9LPbk0GXc-yotn3NZ4ZLE8k6s',
-        category: burgerCategory._id,
-        restaurant: burgerBlast._id,
-        isVeg: true,
-        rating: 4.2
-      },
-      {
-        name: 'Mozzarella Sticks',
-        description: 'Gooey melted mozzarella cheese sticks served with a side of marinara sauce.',
-        price: 149,
-        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCikClZ_rmG-ZHCH3gW_N8bjJivoyYVGIR4EuwTjiy5T0oZSTTLon--htnO19-p8Wb76Hwo-8ugyu7XApSq0Hjn7bdPmDZkNU4QfpDXYmdd_dj93ld7eZDJI2Sxi5EmIMNwLUT4fzuQyAuRzHU6n58QlbyQc4hp-wMNWzq-7uIEV4Pk1CE2GrEDm-EZCcBkuNutLTrRlxni0n7_eWDy3DQkFwV9_VSTgPDzUNx4LKLVPPzvIDQRJtQ4',
-        category: burgerCategory._id,
-        restaurant: burgerBlast._id,
-        isVeg: true,
-        rating: 4.4
-      },
-      {
-        name: 'Pepperoni Pizza',
-        description: 'Rich tomato sauce, mozzarella cheese, and spicy sliced pepperoni.',
-        price: 349,
-        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD3qAUcITXkYBCysPAPDyYD-1G0_0tjT-4RYqMRZD18inuDtytsbEZl3JRiOXKKVYAC_QURLPOA8W_-qsPKbQedePAsUcQkvkFdPDDVmUafGJswICD_wSJeAdfoe4XniBg7m-cS1iuT3ZMpGEwcV7kXnVPKH0lvMEVHBtGTixjk-oWLZiN3RMrF4s9IGF2SIz29wPUATLbTpbZEU2VzftTdPiGTuCsd4zo_TOffntIIxLm8c2VWZ0G2',
-        category: pizzaCategory._id,
-        restaurant: pizzaParadise._id,
-        isVeg: false,
-        rating: 4.8
-      },
-      {
-        name: 'Margherita Pizza',
-        description: 'Classic combination of house tomato sauce, fresh buffalo mozzarella, and fresh basil.',
-        price: 249,
-        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDojFmq8FIht6GQoCtypZ-sYSPSbhpsfWWL70-6KNw-XnaHaBVmcWpnM6R7Wzkikml8TJey2A7w-RoN0wz7cZBGFGeTrGeI0n1YXtJCkHTwjsM4F-SKSEDcfhJ-cpz92c0LVcrnMbJTeub6CBiEt0UzN-14vraiDqK1iTTPpr8360LlkEH8T5NXY1dMjitnb5DQPCsJA2wsEJ2eIm2TdPsSVfVvSStZa-ijBOa6K9T1ET-ypWrkWszH',
-        category: pizzaCategory._id,
-        restaurant: pizzaParadise._id,
-        isVeg: true,
-        rating: 4.5
-      },
-      {
-        name: 'Chocolate Lava Cake',
-        description: 'Molten liquid dark chocolate center with warm vanilla bean cake crust.',
-        price: 129,
-        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD3ZVZcWzAuZ272IjVyDOUwYDBjR-QIRGojFxSx8aIUaef_KPCangYoz0CEW_W09shhkMEyfFQu21YQfrEp_BK2hmGd2WTHrM2eY79i15hZg77H2O9ZsWV-NZSsQwNzXd-OXzIg1gQr_pOQQQgVG-SZr25t5QGXuUvOz7aRkfv4T5BPpiFYoyEDbiNuttbahHCWGQue_fLvebmWHmY7itOb9lbvGk-tZG7ff35uxLeNBic2hC5NnvSk',
-        category: dessertCategory._id,
-        restaurant: burgerBlast._id,
-        isVeg: true,
-        rating: 4.7
-      }
-    ];
-
-    await Food.insertMany(foodsData);
-    console.log('Seeded foods menu.');
-
-    // 6. Seed Coupons
-    console.log('Seeding coupons...');
-    const couponsData = [
-      {
-        code: 'FRESH50',
-        discountType: 'percentage',
-        discountValue: 50,
-        minOrderValue: 200,
-        maxDiscountAmount: 150,
-        active: true,
-        expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days expiry
-      },
-      {
-        code: 'BITE100',
-        discountType: 'flat',
-        discountValue: 100,
-        minOrderValue: 300,
-        active: true,
-        expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-      }
-    ];
-
-    await Coupon.insertMany(couponsData);
-    console.log('Seeded coupons.');
-
-    console.log('Database Seeding Completed Successfully!');
-    mongoose.connection.close();
-  } catch (error) {
-    console.error('Seeding Error:', error);
-    mongoose.connection.close();
-    process.exit(1);
-  }
+const adminUser = {
+  name: 'TastyBite Admin',
+  email: 'admin@tastybite.com',
+  password: 'admin123',
+  role: 'admin',
 };
 
-seedDB();
+async function seed() {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI);
+    console.log('Connected to MongoDB');
+
+    // Clear existing data
+    await MenuItem.deleteMany({});
+    await User.deleteMany({ email: adminUser.email });
+
+    // Insert menu items
+    const inserted = await MenuItem.insertMany(menuItems);
+    console.log(`✅ Inserted ${inserted.length} menu items`);
+
+    // Create admin user
+    const admin = await User.create(adminUser);
+    console.log(`✅ Admin user created: ${admin.email} (password: admin123)`);
+
+    console.log('\n🎉 Database seeded successfully!');
+    process.exit(0);
+  } catch (err) {
+    console.error('❌ Seed failed:', err.message);
+    process.exit(1);
+  }
+}
+
+seed();

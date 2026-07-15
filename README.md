@@ -1,90 +1,158 @@
-# FreshBite - Full-Stack Food Ordering Web App
+# TastyBite 🍔
 
-FreshBite is a full-stack, mobile-first food delivery application built using the MERN stack (MongoDB, Express, React 19, Node.js) with a modern UI inspired by Swiggy, Zomato, and Uber Eats. 
+A **single-restaurant food ordering web app** built with the MERN stack (MongoDB, Express, React, Node.js).
 
----
+## Features
 
-## Key Features
-
-1. **Persisted Shopping Cart:** User carts are stored in MongoDB and synced across logins. Anonymous guest carts are cached in `localStorage` and automatically merged into the database upon user registration or sign-in.
-2. **Dynamic UI:** Rounded layouts, custom typography scales, appetite-stimulating Cravet Red themes, micro-animations, and glassmorphism headers.
-3. **Menu Categorization:** Sticky category links that scroll directly to sections in restaurant menu views.
-4. **Interactive Stepper:** Food items select inline stepper widgets directly inside food cards when added, mimicking premium delivery apps.
-5. **Simulated Live Tracking:** Real-time progress tracker (Placed -> Preparing -> Out for Delivery -> Delivered) using automated database status synchronization.
-6. **Admin Dispatch Center:** Integrated dashboard containing analytics summary stats (revenue, customers, active stores), dropdown status modification, and CRUD capabilities for categories, restaurants, and menu foods.
-
----
-
-## Seeding & Test Credentials
-
-The database contains default seeded accounts to jumpstart testing immediately. Run `npm run seed` in the backend folder to populate the database.
-
-*   **Customer Account:**
-    *   **Email:** `user@freshbite.com`
-    *   **Password:** `user123`
-    *   **Preset Addresses:** 123 Maple St, NY.
-*   **Admin Account:**
-    *   **Email:** `admin@freshbite.com`
-    *   **Password:** `admin123`
-*   **Active Coupons:**
-    *   `FRESH50` (50% Off, min order ₹200, max discount ₹150)
-    *   `BITE100` (Flat ₹100 Off, min order ₹300)
+- 🍽️ Browse a full restaurant menu with categories, search, and veg/non-veg filtering
+- 🛒 Client-side cart that persists across page refreshes (localStorage)
+- 🔐 JWT auth with short-lived access tokens (15 min) + long-lived refresh tokens (7 days, httpOnly cookie)
+- 🔄 Silent token refresh via Axios interceptor — users stay logged in without re-entering their password
+- 📍 Delivery address with Google Places Autocomplete + "Use my current location" (Geolocation API)
+- 📦 Order placement with **server-side price re-validation** — client prices are never trusted
+- 📋 Order history with a live status tracker (placed → preparing → out for delivery → delivered)
+- 🛡️ Admin dashboard to manage menu items (CRUD) and update order statuses
 
 ---
 
-## Setup Instructions
+## Prerequisites
 
-### Prerequisites
-- Node.js installed locally
-- Local MongoDB instance running at `mongodb://127.0.0.1:27017`
+- **Node.js** v18 or higher
+- **MongoDB** running locally (`mongod`) or a MongoDB Atlas connection string
+- (Optional) A **Google Maps API key** for address autocomplete
 
-### Step 1: Clone & Install Dependencies
-1. Navigate to the project root:
-   ```bash
-   cd "c:\Users\ps061\OneDrive\Desktop\food ordering"
-   ```
-2. Install backend dependencies:
-   ```bash
-   cd backend
-   npm install
-   ```
-3. Install frontend dependencies:
-   ```bash
-   cd ../frontend
-   npm install
-   ```
+---
 
-### Step 2: Configure Environment Variables
-Copy the `.env.example` files to `.env` in both folders. The preconfigured defaults are ready for local use:
-- **Backend (`backend/.env`):**
-  ```env
-  PORT=5000
-  MONGODB_URI=mongodb://127.0.0.1:27017/freshbite
-  JWT_SECRET=super_secret_freshbite_token_key_123!
-  NODE_ENV=development
-  FRONTEND_URL=http://localhost:5173
-  ```
-- **Frontend (`frontend/.env`):**
-  ```env
-  VITE_API_URL=http://localhost:5000/api
-  ```
+## Setup
 
-### Step 3: Populate Mock Database
-Seed the local MongoDB database:
+### 1. Backend
+
 ```bash
 cd backend
-npm run seed
+cp .env.example .env
+# Edit .env with your MongoDB URI and JWT secrets
+npm install
+npm run dev        # starts on http://localhost:5000
 ```
 
-### Step 4: Run the Application
-1. Start the backend Express server:
-   ```bash
-   cd backend
-   npm run dev
-   ```
-2. Start the frontend Vite development server in another terminal window:
-   ```bash
-   cd frontend
-   npm run dev
-   ```
-3. Open `http://localhost:5173` in your browser.
+**Seed sample data** (requires MongoDB to be running):
+```bash
+npm run seed
+# Creates 16 menu items + admin user: admin@tastybite.com / admin123
+```
+
+### 2. Frontend
+
+```bash
+cd frontend
+cp .env.example .env
+# Add your VITE_GOOGLE_MAPS_API_KEY if available (optional)
+npm install
+npm run dev        # starts on http://localhost:5173
+```
+
+---
+
+## Environment Variables
+
+### `backend/.env`
+
+| Variable | Description | Default |
+|---|---|---|
+| `PORT` | Server port | `5000` |
+| `MONGODB_URI` | MongoDB connection string | `mongodb://127.0.0.1:27017/tastybite` |
+| `JWT_ACCESS_SECRET` | Secret for signing access tokens | *(required)* |
+| `JWT_REFRESH_SECRET` | Secret for signing refresh tokens | *(required)* |
+| `JWT_ACCESS_EXPIRY` | Access token lifetime | `15m` |
+| `JWT_REFRESH_EXPIRY` | Refresh token lifetime | `7d` |
+| `NODE_ENV` | Environment | `development` |
+| `FRONTEND_URL` | Allowed CORS origin | `http://localhost:5173` |
+
+### `frontend/.env`
+
+| Variable | Description |
+|---|---|
+| `VITE_API_BASE_URL` | Backend API base URL (e.g. `http://localhost:5000/api`) |
+| `VITE_GOOGLE_MAPS_API_KEY` | Google Maps API key (optional — falls back to plain text input) |
+
+---
+
+## Getting a Google Maps API Key
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project (or select an existing one)
+3. Enable these three APIs:
+   - **Maps JavaScript API**
+   - **Places API**
+   - **Geocoding API**
+4. Go to **Credentials → Create API Key**
+5. (Recommended) Add HTTP referrer restrictions: `http://localhost:5173/*`
+6. Copy the key into `frontend/.env` as `VITE_GOOGLE_MAPS_API_KEY`
+
+---
+
+## API Reference
+
+### Auth — `/api/auth`
+| Method | Route | Auth | Description |
+|---|---|---|---|
+| POST | `/signup` | — | Register new user |
+| POST | `/login` | — | Login, returns access token + sets refresh cookie |
+| POST | `/logout` | — | Clears refresh token |
+| POST | `/refresh` | Cookie | Get new access token |
+| GET | `/me` | ✅ | Get current user profile |
+| GET | `/addresses` | ✅ | List saved addresses |
+| POST | `/addresses` | ✅ | Add a saved address |
+| DELETE | `/addresses/:id` | ✅ | Remove a saved address |
+
+### Menu — `/api/menu`
+| Method | Route | Auth | Description |
+|---|---|---|---|
+| GET | `/` | — | All available items (optional `?category=`) |
+| GET | `/search?q=` | — | Regex search across name/description/category |
+| GET | `/categories` | — | Distinct category list |
+| GET | `/:id` | — | Single item |
+| POST | `/` | 🛡️ Admin | Create item |
+| PUT | `/:id` | 🛡️ Admin | Update item |
+| DELETE | `/:id` | 🛡️ Admin | Delete item |
+
+### Orders — `/api/orders`
+| Method | Route | Auth | Description |
+|---|---|---|---|
+| POST | `/` | ✅ | Place order (re-validates prices server-side) |
+| GET | `/` | ✅ | Current user's order history |
+| GET | `/all` | 🛡️ Admin | All orders |
+| GET | `/:id` | ✅ | Single order (owner or admin) |
+| PATCH | `/:id/status` | 🛡️ Admin | Update order status |
+
+---
+
+## Project Structure
+
+```
+food ordering/
+├── backend/
+│   ├── config/          # MongoDB connection
+│   ├── controllers/     # authController, menuController, orderController
+│   ├── middleware/       # protect, adminOnly, errorHandler
+│   ├── models/          # User, MenuItem, Order
+│   ├── routes/          # auth.js, menu.js, orders.js
+│   ├── seed.js          # Sample data seed script
+│   └── server.js
+└── frontend/
+    └── src/
+        ├── context/     # AuthContext, CartContext
+        ├── services/    # api.js (Axios + token refresh interceptor)
+        ├── components/  # Navbar, MenuItemCard, CartItemRow, AddressAutocomplete, guards
+        └── pages/       # Home, Menu, Cart, Login, Signup, Checkout, Orders, Admin
+```
+
+---
+
+## Admin Access
+
+After running the seed script:
+- **Email:** `admin@tastybite.com`
+- **Password:** `admin123`
+
+> ⚠️ Change the admin password immediately in a production environment.

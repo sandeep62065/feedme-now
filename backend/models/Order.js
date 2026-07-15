@@ -1,57 +1,37 @@
 import mongoose from 'mongoose';
 
 const orderItemSchema = new mongoose.Schema({
-  food: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Food',
-    required: true
-  },
-  quantity: { type: Number, required: true },
-  priceAtOrder: { type: Number, required: true },
-  nameAtOrder: { type: String, required: true },
-  imageAtOrder: { type: String, required: true }
-});
+  menuItem: { type: mongoose.Schema.Types.ObjectId, ref: 'MenuItem' },
+  // Snapshot fields captured at order time
+  name: { type: String, required: true },
+  price: { type: Number, required: true },
+  image: { type: String },
+  quantity: { type: Number, required: true, min: 1 },
+}, { _id: true });
+
+const deliveryAddressSchema = new mongoose.Schema({
+  formattedAddress: { type: String, required: true },
+  lat: { type: Number },
+  lng: { type: Number },
+  placeId: { type: String },
+}, { _id: false });
 
 const orderSchema = new mongoose.Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
-  restaurant: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Restaurant',
-    required: true
-  },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
   items: [orderItemSchema],
-  deliveryAddress: {
-    street: { type: String, required: true },
-    city: { type: String, required: true },
-    state: { type: String, required: true },
-    zipCode: { type: String, required: true }
-  },
-  paymentMethod: {
+  totalAmount: { type: Number, required: true },
+  deliveryAddress: { type: deliveryAddressSchema, required: true },
+  status: {
     type: String,
-    required: true,
-    enum: ['COD', 'Card']
+    enum: ['placed', 'preparing', 'out_for_delivery', 'delivered', 'cancelled'],
+    default: 'placed',
   },
   paymentStatus: {
     type: String,
-    enum: ['Pending', 'Paid', 'Failed'],
-    default: 'Pending'
+    enum: ['pending', 'paid', 'failed'],
+    default: 'pending',
   },
-  orderStatus: {
-    type: String,
-    enum: ['Placed', 'Preparing', 'Out for Delivery', 'Delivered', 'Cancelled'],
-    default: 'Placed'
-  },
-  subtotal: { type: Number, required: true },
-  deliveryFee: { type: Number, required: true },
-  gst: { type: Number, required: true },
-  total: { type: Number, required: true }
-}, {
-  timestamps: true
-});
+  notes: { type: String, default: '' },
+}, { timestamps: true });
 
-const Order = mongoose.model('Order', orderSchema);
-export default Order;
+export default mongoose.model('Order', orderSchema);
