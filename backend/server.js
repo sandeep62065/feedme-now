@@ -7,6 +7,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import connectDB from './config/db.js';
+import { seedOnStartup } from './config/seedOnStartup.js';
 import { errorHandler } from './middleware/error.js';
 
 // Route imports
@@ -20,26 +21,36 @@ const __dirname = path.dirname(__filename);
 // Load env vars first
 dotenv.config({ path: path.join(__dirname, '.env') });
 
-// Connect to Database
-connectDB();
+// Connect to Database and seed if empty
+connectDB().then(() => seedOnStartup());
 
 const app = express();
 
-// Security
-app.use(helmet());
+// Security — relax crossOriginResourcePolicy for cross-origin API calls
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+}));
 
-const allowedOrigins = [
-  'http://feedme-now-bfo2.vercel.app',
-  'https://feedme-now-bfo2.vercel.app',   // ✅ https required on Vercel
-  'http://127.0.0.1:5173',
-  'http://localhost:5173',
-  'https://feedme-now.vercel.app',
-  process.env.FRONTEND_URL,
-].filter(Boolean);
+// CORS — reads CLIENT_URL from env (comma-separated for multiple origins)
+// Set CLIENT_URL=* to allow all origins temporarily during testing
+const clientUrl = process.env.CLIENT_URL || process.env.FRONTEND_URL || '';
+
+const allowedOrigins = clientUrl === '*'
+  ? null  // null = allow all via callback
+  : [
+      ...clientUrl.split(',').map(u => u.trim()).filter(Boolean),
+      'http://localhost:5173',
+      'http://127.0.0.1:5173',
+    ];
 
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' ? allowedOrigins : true,
-  credentials: true,     // required so the browser sends the httpOnly refresh-token cookie
+  origin: process.env.NODE_ENV === 'production'
+    ? (allowedOrigins === null
+        // Reflect any requesting origin (temporary wildcard that supports credentials)
+        ? (origin, cb) => cb(null, true)
+        : allowedOrigins)
+    : true,
+  credentials: true,
 }));
 
 // Logging (dev only)
@@ -62,8 +73,6 @@ app.use(errorHandler);
 
 // Serve Frontend in Production
 if (process.env.NODE_ENV === 'production') {
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
 
   // Set static folder
   app.use(express.static(path.join(__dirname, '../frontend/dist')));
@@ -78,9 +87,11 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 TastyBite server running on port ${PORT} [${process.env.NODE_ENV || 'development'}]`);
-});
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`🚀 TastyBite server running on port ${PORT} [${process.env.NODE_ENV || 'development'}]`);
+  });
+}
 
 export default app;

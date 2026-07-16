@@ -93,7 +93,11 @@ export const logout = async (req, res) => {
   if (token) {
     await User.findOneAndUpdate({ refreshToken: token }, { refreshToken: null });
   }
-  res.clearCookie('refreshToken');
+  res.clearCookie('refreshToken', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+  });
   res.json({ message: 'Logged out successfully.' });
 };
 

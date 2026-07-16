@@ -66,10 +66,8 @@ export const seedOnStartup = async () => {
         role: 'customer',
         addresses: [
           {
-            street: '123 Maple St',
-            city: 'New York',
-            state: 'NY',
-            zipCode: '10001',
+            label: 'Home',
+            formattedAddress: '123 Maple St, New York, NY 10001',
             isDefault: true
           }
         ]

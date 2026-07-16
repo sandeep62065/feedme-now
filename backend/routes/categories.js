@@ -1,11 +1,11 @@
 import express from 'express';
 import { getCategories, createCategory } from '../controllers/categoryController.js';
-import { protect, admin } from '../middleware/auth.js';
+import { protect, adminOnly } from '../middleware/auth.js';
 
 const router = express.Router();
 
 router.route('/')
   .get(getCategories)
-  .post(protect, admin, createCategory);
+  .post(protect, adminOnly, createCategory);
 
 export default router;

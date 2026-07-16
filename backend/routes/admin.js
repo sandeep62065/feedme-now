@@ -5,12 +5,12 @@ import {
   getAdminStats,
   getAllUsers
 } from '../controllers/adminController.js';
-import { protect, admin } from '../middleware/auth.js';
+import { protect, adminOnly } from '../middleware/auth.js';
 
 const router = express.Router();
 
 router.use(protect);
-router.use(admin);
+router.use(adminOnly);
 
 router.get('/orders', getAllOrders);
 router.patch('/orders/:id/status', updateOrderStatus);

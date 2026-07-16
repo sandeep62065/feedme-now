@@ -4,13 +4,13 @@ import {
   getFoodById,
   createFood
 } from '../controllers/foodController.js';
-import { protect, admin } from '../middleware/auth.js';
+import { protect, adminOnly } from '../middleware/auth.js';
 
 const router = express.Router();
 
 router.route('/')
   .get(getFoods)
-  .post(protect, admin, createFood);
+  .post(protect, adminOnly, createFood);
 
 router.route('/:id')
   .get(getFoodById);
