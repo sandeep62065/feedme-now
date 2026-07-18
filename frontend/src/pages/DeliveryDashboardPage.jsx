@@ -43,7 +43,7 @@ export default function DeliveryDashboardPage() {
   // Location streaming logic when there is an active order
   useEffect(() => {
     let watchId;
-    let intervalId;
+    let intervalId = null;
 
     if (activeOrder) {
       const backendUrl = import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL.replace('/api', '') : 'http://localhost:5000';
@@ -61,7 +61,7 @@ export default function DeliveryDashboardPage() {
 
       const startFallback = () => {
         if (intervalId) return; // already started
-        toast('Using simulated location (GPS blocked)', { icon: '📡' });
+        toast.error('GPS taking too long. Using simulated location...', { icon: '📡', id: 'gps-fallback' });
         let mockLat = 19.0760;
         let mockLng = 72.8777;
         intervalId = setInterval(() => {
@@ -71,37 +71,49 @@ export default function DeliveryDashboardPage() {
         }, 3000);
       };
 
+      const stopFallback = () => {
+        if (intervalId) {
+          clearInterval(intervalId);
+          intervalId = null;
+          toast.success('Live GPS signal restored!', { id: 'gps-restored' });
+        }
+      };
+
       if (navigator.geolocation) {
         let hasLocation = false;
 
         navigator.geolocation.getCurrentPosition(
           (pos) => {
             hasLocation = true;
+            stopFallback();
             emitLocation(pos.coords.latitude, pos.coords.longitude);
           },
           (err) => {
-            hasLocation = true;
+            console.warn("GPS error:", err);
             startFallback();
           },
-          { enableHighAccuracy: true, timeout: 5000 }
+          { enableHighAccuracy: true, timeout: 10000 }
         );
 
-        // Fail-safe: if getCurrentPosition hangs (common Windows bug), force fallback after 5s
+        // Fail-safe: if GPS takes more than 8 seconds, start fallback.
+        // But if GPS kicks in later, stopFallback() will cancel this simulation.
         setTimeout(() => {
           if (!hasLocation) {
             startFallback();
           }
-        }, 5000);
+        }, 8000);
 
         watchId = navigator.geolocation.watchPosition(
           (pos) => {
             hasLocation = true;
+            stopFallback(); // If we get a real update, immediately kill the dummy simulator
             emitLocation(pos.coords.latitude, pos.coords.longitude);
           },
           (err) => {
+            console.warn("Watch GPS error:", err);
             if (!hasLocation) startFallback();
           },
-          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+          { enableHighAccuracy: true, timeout: 15000, maximumAge: 5000 }
         );
       } else {
         startFallback();
@@ -109,7 +121,7 @@ export default function DeliveryDashboardPage() {
     }
 
     return () => {
-      if (watchId) navigator.geolocation.clearWatch(watchId);
+      if (watchId && navigator.geolocation) navigator.geolocation.clearWatch(watchId);
       if (intervalId) clearInterval(intervalId);
       if (socketRef.current) socketRef.current.disconnect();
     };
