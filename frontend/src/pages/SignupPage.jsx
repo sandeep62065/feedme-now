@@ -8,6 +8,7 @@ export default function SignupPage() {
   const { signup } = useAuth();
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
+  const [isDeliveryPartner, setIsDeliveryPartner] = useState(false);
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
   const password = watch('password');
@@ -15,9 +16,16 @@ export default function SignupPage() {
   const onSubmit = async (data) => {
     setSubmitting(true);
     try {
-      await signup({ name: data.name, email: data.email, password: data.password, phone: data.phone });
-      toast.success('Account created! Welcome to Feedme-Now 🎉');
-      navigate('/menu');
+      await signup({ 
+        name: data.name, 
+        email: data.email, 
+        password: data.password, 
+        phone: data.phone,
+        isDeliveryPartner,
+        vehicle: data.vehicle
+      });
+      toast.success(isDeliveryPartner ? 'Delivery Partner Account created! 🎉' : 'Account created! Welcome to Feedme-Now 🎉');
+      navigate(isDeliveryPartner ? '/delivery-dashboard' : '/menu');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Signup failed');
     } finally {
@@ -38,6 +46,24 @@ export default function SignupPage() {
                 Join Feedme<span className="text-amber-500">-Now</span>
               </h1>
               <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Create your account and start ordering</p>
+            </div>
+
+            {/* Role Toggle */}
+            <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-xl mb-6">
+              <button
+                type="button"
+                className={`flex-1 py-2 text-sm font-bold rounded-lg transition-colors ${!isDeliveryPartner ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500'}`}
+                onClick={() => setIsDeliveryPartner(false)}
+              >
+                Customer
+              </button>
+              <button
+                type="button"
+                className={`flex-1 py-2 text-sm font-bold rounded-lg transition-colors ${isDeliveryPartner ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500'}`}
+                onClick={() => setIsDeliveryPartner(true)}
+              >
+                Delivery Partner
+              </button>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -83,6 +109,20 @@ export default function SignupPage() {
                   className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-gray-700 text-sm bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400 dark:focus:border-amber-400 transition"
                 />
               </div>
+
+              {/* Vehicle (Delivery Partners only) */}
+              {isDeliveryPartner && (
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Vehicle Details</label>
+                  <input
+                    {...register('vehicle', { required: isDeliveryPartner ? 'Vehicle is required' : false })}
+                    type="text"
+                    placeholder="e.g. Honda Activa (MH 12 AB 1234)"
+                    className={`w-full h-11 px-4 rounded-xl border text-sm bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-400/50 transition ${errors.vehicle ? 'border-red-400' : 'border-gray-200 dark:border-gray-700 focus:border-amber-400 dark:focus:border-amber-400'}`}
+                  />
+                  {errors.vehicle && <p className="text-red-500 text-xs">{errors.vehicle.message}</p>}
+                </div>
+              )}
 
               {/* Password */}
               <div className="flex flex-col gap-1.5">

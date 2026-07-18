@@ -15,7 +15,8 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
   password: { type: String, required: true, minlength: 6 },
   phone: { type: String, trim: true },
-  role: { type: String, enum: ['customer', 'admin'], default: 'customer' },
+  role: { type: String, enum: ['customer', 'admin', 'delivery_partner'], default: 'customer' },
+  vehicle: { type: String, trim: true },
   addresses: [addressSchema],
   refreshToken: { type: String, default: null },
 }, { timestamps: true });

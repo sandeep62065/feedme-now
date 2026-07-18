@@ -34,8 +34,8 @@ export function AuthProvider({ children }) {
     return () => window.removeEventListener('auth:logout', handleForceLogout);
   }, []);
 
-  const signup = useCallback(async ({ name, email, password, phone }) => {
-    const { data } = await api.post('/auth/signup', { name, email, password, phone });
+  const signup = useCallback(async ({ name, email, password, phone, isDeliveryPartner, vehicle }) => {
+    const { data } = await api.post('/auth/signup', { name, email, password, phone, isDeliveryPartner, vehicle });
     setAccessToken(data.accessToken);
     setUser(data.user);
     return data.user;

@@ -67,6 +67,7 @@ function OrderCard({ order }) {
 function OrderDetailView({ orderId }) {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [liveLocation, setLiveLocation] = useState(null);
 
   useEffect(() => {
     // Fetch initial order data
@@ -89,6 +90,10 @@ function OrderDetailView({ orderId }) {
           origin: { y: 0.6 }
         });
       }
+    });
+
+    socket.on('deliveryLocationUpdate', ({ lat, lng }) => {
+      setLiveLocation({ lat, lng });
     });
 
     return () => socket.disconnect();
@@ -158,7 +163,7 @@ function OrderDetailView({ orderId }) {
             )}
 
             <DeliveryMap 
-              partnerLocation={order.deliveryPartner?.location} 
+              partnerLocation={liveLocation || order.deliveryPartner?.location} 
               deliveryAddress={order.deliveryAddress} 
             />
           </div>

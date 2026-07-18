@@ -38,9 +38,12 @@ export default function Navbar() {
         <nav className="hidden md:flex items-center gap-6">
           <NavLink to="/" end className={navLinkClass}>Home</NavLink>
           <NavLink to="/menu" className={navLinkClass}>Menu</NavLink>
-          {user && <NavLink to="/orders" className={navLinkClass}>My Orders</NavLink>}
+          {user?.role === 'customer' && <NavLink to="/orders" className={navLinkClass}>My Orders</NavLink>}
           {user?.role === 'admin' && (
             <NavLink to="/admin" className={navLinkClass}>Admin</NavLink>
+          )}
+          {user?.role === 'delivery_partner' && (
+            <NavLink to="/delivery-dashboard" className={navLinkClass}>Dashboard</NavLink>
           )}
         </nav>
 
@@ -128,9 +131,12 @@ export default function Navbar() {
         <div className="md:hidden bg-white dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800 px-4 py-4 flex flex-col gap-3 shadow-lg animate-in slide-in-from-top-2 duration-200">
           <NavLink to="/" end className={navLinkClass} onClick={() => setMenuOpen(false)}>Home</NavLink>
           <NavLink to="/menu" className={navLinkClass} onClick={() => setMenuOpen(false)}>Menu</NavLink>
-          {user && <NavLink to="/orders" className={navLinkClass} onClick={() => setMenuOpen(false)}>My Orders</NavLink>}
+          {user?.role === 'customer' && <NavLink to="/orders" className={navLinkClass} onClick={() => setMenuOpen(false)}>My Orders</NavLink>}
           {user?.role === 'admin' && (
             <NavLink to="/admin" className={navLinkClass} onClick={() => setMenuOpen(false)}>Admin</NavLink>
+          )}
+          {user?.role === 'delivery_partner' && (
+            <NavLink to="/delivery-dashboard" className={navLinkClass} onClick={() => setMenuOpen(false)}>Dashboard</NavLink>
           )}
           <div className="pt-2 border-t border-gray-100 dark:border-gray-800">
             {user ? (

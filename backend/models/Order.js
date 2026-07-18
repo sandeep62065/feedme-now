@@ -32,6 +32,7 @@ const orderSchema = new mongoose.Schema({
     default: 'pending',
   },
   notes: { type: String, default: '' },
+  deliveryPartnerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   deliveryPartner: {
     name: { type: String },
     phone: { type: String },

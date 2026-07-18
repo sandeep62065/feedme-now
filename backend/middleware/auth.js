@@ -33,3 +33,13 @@ export const adminOnly = (req, res, next) => {
   }
   next();
 };
+
+/**
+ * Delivery-partner only gate — must be used AFTER protect middleware.
+ */
+export const deliveryPartnerOnly = (req, res, next) => {
+  if (req.user?.role !== 'delivery_partner') {
+    return res.status(403).json({ message: 'Access denied. Delivery partners only.' });
+  }
+  next();
+};

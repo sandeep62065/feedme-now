@@ -27,7 +27,7 @@ const REFRESH_COOKIE_OPTIONS = {
  */
 export const signup = async (req, res) => {
   try {
-    const { name, email, password, phone } = req.body;
+    const { name, email, password, phone, isDeliveryPartner, vehicle } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: 'Name, email, and password are required.' });
@@ -35,13 +35,17 @@ export const signup = async (req, res) => {
     if (password.length < 6) {
       return res.status(400).json({ message: 'Password must be at least 6 characters.' });
     }
+    if (isDeliveryPartner && !vehicle) {
+      return res.status(400).json({ message: 'Vehicle details are required for delivery partners.' });
+    }
 
     const existing = await User.findOne({ email: String(email).toLowerCase() });
     if (existing) {
       return res.status(400).json({ message: 'An account with this email already exists.' });
     }
 
-    const user = await User.create({ name, email, password, phone });
+    const role = isDeliveryPartner ? 'delivery_partner' : 'customer';
+    const user = await User.create({ name, email, password, phone, role, vehicle });
 
     const accessToken = signAccessToken(user._id);
     const refreshToken = signRefreshToken(user._id);

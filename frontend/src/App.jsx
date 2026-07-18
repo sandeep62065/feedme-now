@@ -7,6 +7,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
+import DeliveryRoute from './components/DeliveryRoute';
 
 import HomePage from './pages/HomePage';
 import MenuPage from './pages/MenuPage';
@@ -16,6 +17,7 @@ import SignupPage from './pages/SignupPage';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderHistoryPage from './pages/OrderHistoryPage';
 import AdminPage from './pages/AdminPage';
+import DeliveryDashboardPage from './pages/DeliveryDashboardPage';
 
 export default function App() {
   return (
@@ -52,6 +54,12 @@ export default function App() {
                 <Route
                   path="/admin"
                   element={<AdminRoute><AdminPage /></AdminRoute>}
+                />
+
+                {/* Delivery only */}
+                <Route
+                  path="/delivery-dashboard"
+                  element={<DeliveryRoute><DeliveryDashboardPage /></DeliveryRoute>}
                 />
 
                 {/* 404 */}

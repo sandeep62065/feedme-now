@@ -16,6 +16,7 @@ import { errorHandler } from './middleware/error.js';
 import authRoutes from './routes/auth.js';
 import menuRoutes from './routes/menu.js';
 import orderRoutes from './routes/orders.js';
+import deliveryRoutes from './routes/delivery.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -47,6 +48,11 @@ io.on('connection', (socket) => {
   socket.on('joinOrderRoom', (orderId) => {
     socket.join(`order_${orderId}`);
     console.log(`Socket ${socket.id} joined room order_${orderId}`);
+  });
+
+  // Delivery partner emits location updates
+  socket.on('updateDeliveryLocation', ({ orderId, lat, lng }) => {
+    io.to(`order_${orderId}`).emit('deliveryLocationUpdate', { lat, lng });
   });
 
   socket.on('disconnect', () => {
@@ -95,6 +101,7 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/menu', menuRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/delivery', deliveryRoutes);
 
 // Global error handler (must be last api middleware)
 app.use(errorHandler);
