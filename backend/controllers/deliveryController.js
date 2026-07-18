@@ -3,7 +3,7 @@ import Order from '../models/Order.js';
 export const getAvailableOrders = async (req, res) => {
   // Find orders that are preparing and don't have a delivery partner yet
   const orders = await Order.find({ 
-    status: { $in: ['placed', 'preparing'] },
+    status: 'preparing',
     deliveryPartnerId: { $exists: false }
   }).sort({ createdAt: 1 }).populate('user', 'name phone');
   res.json({ orders });
@@ -30,7 +30,8 @@ export const acceptOrder = async (req, res) => {
   order.deliveryPartner = {
     name: req.user.name,
     phone: req.user.phone,
-    vehicle: req.user.vehicle
+    vehicle: req.user.vehicle,
+    location: { lat: 19.0760, lng: 72.8777 } // Initial mock fallback (e.g. Restaurant location)
   };
   order.eta = new Date(Date.now() + 20 * 60000).toISOString();
   

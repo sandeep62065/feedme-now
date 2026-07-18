@@ -42,9 +42,6 @@ export default function Navbar() {
           {user?.role === 'admin' && (
             <NavLink to="/admin" className={navLinkClass}>Admin</NavLink>
           )}
-          {user?.role === 'delivery_partner' && (
-            <NavLink to="/delivery-dashboard" className={navLinkClass}>Dashboard</NavLink>
-          )}
         </nav>
 
         {/* Right Actions */}
@@ -134,9 +131,6 @@ export default function Navbar() {
           {user?.role === 'customer' && <NavLink to="/orders" className={navLinkClass} onClick={() => setMenuOpen(false)}>My Orders</NavLink>}
           {user?.role === 'admin' && (
             <NavLink to="/admin" className={navLinkClass} onClick={() => setMenuOpen(false)}>Admin</NavLink>
-          )}
-          {user?.role === 'delivery_partner' && (
-            <NavLink to="/delivery-dashboard" className={navLinkClass} onClick={() => setMenuOpen(false)}>Dashboard</NavLink>
           )}
           <div className="pt-2 border-t border-gray-100 dark:border-gray-800">
             {user ? (

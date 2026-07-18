@@ -16,9 +16,13 @@ export default function LoginPage() {
   const onSubmit = async (data) => {
     setSubmitting(true);
     try {
-      await login({ email: data.email, password: data.password });
+      const loggedInUser = await login({ email: data.email, password: data.password });
       toast.success('Welcome back! 👋');
-      navigate(from, { replace: true });
+      if (loggedInUser?.role === 'delivery_partner') {
+        navigate('/delivery-dashboard', { replace: true });
+      } else {
+        navigate(from, { replace: true });
+      }
     } catch (err) {
       toast.error(err.response?.data?.message || 'Login failed');
     } finally {

@@ -87,19 +87,8 @@ export const updateOrderStatus = async (req, res) => {
 
   const updateData = { status };
   
-  // Add mock ETA and delivery partner if out_for_delivery
-  if (status === 'out_for_delivery') {
-    updateData.eta = new Date(Date.now() + 20 * 60000).toISOString(); // 20 mins from now
-    updateData.deliveryPartner = {
-      name: 'Ramesh Kumar',
-      phone: '+91 9876543210',
-      vehicle: 'Honda Activa (MH 12 AB 1234)',
-      location: {
-        lat: 19.0760, // Example: Mumbai
-        lng: 72.8777
-      }
-    };
-  } else if (status === 'delivered') {
+  // Add mock ETA if delivered, but NO mock delivery partner injection
+  if (status === 'delivered') {
     updateData.eta = new Date().toISOString();
   }
 

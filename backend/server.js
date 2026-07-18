@@ -33,7 +33,9 @@ const httpServer = createServer(app);
 // Initialize Socket.io
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: process.env.NODE_ENV === 'production' 
+      ? (process.env.CLIENT_URL || 'http://localhost:5173')
+      : true, // Allow all origins in dev mode (e.g. local IPs)
     credentials: true,
   }
 });

@@ -52,11 +52,21 @@ function OrderCard({ order }) {
         ))}
       </div>
 
-      <div className="border-t border-gray-100 dark:border-gray-800 pt-3 flex justify-between items-center">
-        <div>
-          <p className="text-xs text-gray-500 truncate max-w-[200px]">📍 {order.deliveryAddress.formattedAddress}</p>
+      <div className="border-t border-gray-100 dark:border-gray-800 pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex-1">
+          <p className="text-xs text-gray-500 truncate">📍 {order.deliveryAddress.formattedAddress}</p>
+          <p className="font-black text-gray-900 dark:text-white mt-0.5">₹{order.totalAmount.toFixed(0)}</p>
         </div>
-        <p className="font-black text-gray-900 dark:text-white">₹{order.totalAmount.toFixed(0)}</p>
+        <button className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold px-4 py-2 rounded-xl transition-colors shrink-0 shadow-sm flex items-center justify-center gap-1.5">
+          {order.status === 'out_for_delivery' ? (
+            <>
+              <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+              Live Track Order
+            </>
+          ) : (
+            'View Details'
+          )}
+        </button>
       </div>
     </div>
   );
@@ -76,7 +86,7 @@ function OrderDetailView({ orderId }) {
       .finally(() => setLoading(false));
 
     // Initialize socket connection
-    const backendUrl = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : 'http://localhost:5000';
+    const backendUrl = import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL.replace('/api', '') : 'http://localhost:5000';
     const socket = io(backendUrl, { withCredentials: true });
 
     socket.emit('joinOrderRoom', orderId);
