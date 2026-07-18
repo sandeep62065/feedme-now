@@ -30,11 +30,22 @@ connectDB().then(() => seedOnStartup());
 const app = express();
 const httpServer = createServer(app);
 
+// Calculate allowed origins first so both Express and Socket.io can use it
+const clientUrl = process.env.CLIENT_URL || process.env.FRONTEND_URL || '';
+
+const allowedOrigins = clientUrl === '*'
+  ? null  // null = allow all via callback
+  : [
+      ...clientUrl.split(',').map(u => u.trim()).filter(Boolean),
+      'http://localhost:5173',
+      'http://127.0.0.1:5173',
+    ];
+
 // Initialize Socket.io
 const io = new Server(httpServer, {
   cors: {
     origin: process.env.NODE_ENV === 'production' 
-      ? (process.env.CLIENT_URL || 'http://localhost:5173')
+      ? (allowedOrigins === null ? true : allowedOrigins)
       : true, // Allow all origins in dev mode (e.g. local IPs)
     credentials: true,
   }
@@ -69,15 +80,6 @@ app.use(helmet({
 
 // CORS — reads CLIENT_URL from env (comma-separated for multiple origins)
 // Set CLIENT_URL=* to allow all origins temporarily during testing
-const clientUrl = process.env.CLIENT_URL || process.env.FRONTEND_URL || '';
-
-const allowedOrigins = clientUrl === '*'
-  ? null  // null = allow all via callback
-  : [
-      ...clientUrl.split(',').map(u => u.trim()).filter(Boolean),
-      'http://localhost:5173',
-      'http://127.0.0.1:5173',
-    ];
 
 app.use(cors({
   origin: process.env.NODE_ENV === 'production'

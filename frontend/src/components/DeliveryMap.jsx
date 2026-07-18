@@ -11,11 +11,18 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
+const bikeSvg = encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="45" fill="#f59e0b" stroke="#ffffff" stroke-width="5"/>
+  <text x="50" y="65" font-size="45" text-anchor="middle" fill="#ffffff">🛵</text>
+</svg>
+`);
+
 const customBikeIcon = new L.Icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/754/754294.png', // A free bike icon
+  iconUrl: `data:image/svg+xml;charset=utf-8,${bikeSvg}`,
   iconSize: [40, 40],
-  iconAnchor: [20, 40],
-  popupAnchor: [0, -40],
+  iconAnchor: [20, 20],
+  popupAnchor: [0, -20],
 });
 
 function ChangeView({ center }) {
