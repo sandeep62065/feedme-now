@@ -1,6 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import api from '../services/api';
+import { io } from 'socket.io-client';
+import confetti from 'canvas-confetti';
+import OrderTracker from '../components/OrderTracker';
+import DeliveryMap from '../components/DeliveryMap';
+import { Phone } from 'lucide-react';
 
 const STATUS_STEPS = ['placed', 'preparing', 'out_for_delivery', 'delivered'];
 const STATUS_LABELS = {
@@ -64,9 +69,29 @@ function OrderDetailView({ orderId }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Fetch initial order data
     api.get(`/orders/${orderId}`)
       .then(({ data }) => setOrder(data.order))
       .finally(() => setLoading(false));
+
+    // Initialize socket connection
+    const backendUrl = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : 'http://localhost:5000';
+    const socket = io(backendUrl, { withCredentials: true });
+
+    socket.emit('joinOrderRoom', orderId);
+
+    socket.on('orderStatusUpdated', (updatedOrder) => {
+      setOrder(prev => ({ ...prev, ...updatedOrder }));
+      if (updatedOrder.status === 'delivered') {
+        confetti({
+          particleCount: 150,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+      }
+    });
+
+    return () => socket.disconnect();
   }, [orderId]);
 
   if (loading) return (
@@ -93,24 +118,49 @@ function OrderDetailView({ orderId }) {
           <StatusBadge status={order.status} />
         </div>
 
-        {/* Progress bar */}
-        {order.status !== 'cancelled' && (
-          <div className="mb-6">
-            <div className="flex items-center gap-1">
-              {STATUS_STEPS.map((step, i) => (
-                <div key={step} className="flex items-center gap-1 flex-1 last:flex-none">
-                  <div className={`flex flex-col items-center gap-1 ${i <= stepIdx ? 'text-amber-500' : 'text-gray-300'}`}>
-                    <div className={`w-7 h-7 rounded-full border-2 flex items-center justify-center text-xs ${i <= stepIdx ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/20' : 'border-gray-200 dark:border-gray-700'}`}>
-                      {i < stepIdx ? '✓' : i === stepIdx ? '●' : '○'}
-                    </div>
-                    <span className="text-[9px] font-bold hidden sm:block">{STATUS_LABELS[step]}</span>
-                  </div>
-                  {i < STATUS_STEPS.length - 1 && (
-                    <div className={`flex-1 h-0.5 mx-1 ${i < stepIdx ? 'bg-amber-500' : 'bg-gray-200 dark:bg-gray-700'}`} />
-                  )}
-                </div>
-              ))}
+        {/* Progress Tracker */}
+        <OrderTracker currentStatus={order.status} />
+
+        {/* ETA & Delivery Info */}
+        {order.status === 'out_for_delivery' && (
+          <div className="mb-6 space-y-4">
+            <div className="bg-amber-50 dark:bg-amber-900/10 p-4 rounded-xl border border-amber-200 dark:border-amber-800 flex justify-between items-center">
+              <div>
+                <p className="text-xs text-amber-700 dark:text-amber-500 font-bold uppercase tracking-wider">Estimated Arrival</p>
+                <p className="text-xl font-black text-amber-900 dark:text-amber-400">
+                  {order.eta ? new Date(order.eta).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Soon'}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-gray-500 dark:text-gray-400">Delivery Partner</p>
+                <p className="text-sm font-bold text-gray-900 dark:text-white">{order.deliveryPartner?.name || 'Assigned Soon'}</p>
+              </div>
             </div>
+
+            {order.deliveryPartner && (
+              <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center justify-between shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-xl">
+                    🛵
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-gray-900 dark:text-white">{order.deliveryPartner.name}</p>
+                    <p className="text-xs text-gray-500">{order.deliveryPartner.vehicle}</p>
+                  </div>
+                </div>
+                <a 
+                  href={`tel:${order.deliveryPartner.phone}`}
+                  className="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center hover:bg-green-200 transition-colors"
+                >
+                  <Phone className="w-4 h-4" />
+                </a>
+              </div>
+            )}
+
+            <DeliveryMap 
+              partnerLocation={order.deliveryPartner?.location} 
+              deliveryAddress={order.deliveryAddress} 
+            />
           </div>
         )}
 

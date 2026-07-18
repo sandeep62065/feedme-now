@@ -85,12 +85,37 @@ export const updateOrderStatus = async (req, res) => {
     return res.status(400).json({ message: `Invalid status. Must be one of: ${valid.join(', ')}` });
   }
 
+  const updateData = { status };
+  
+  // Add mock ETA and delivery partner if out_for_delivery
+  if (status === 'out_for_delivery') {
+    updateData.eta = new Date(Date.now() + 20 * 60000).toISOString(); // 20 mins from now
+    updateData.deliveryPartner = {
+      name: 'Ramesh Kumar',
+      phone: '+91 9876543210',
+      vehicle: 'Honda Activa (MH 12 AB 1234)',
+      location: {
+        lat: 19.0760, // Example: Mumbai
+        lng: 72.8777
+      }
+    };
+  } else if (status === 'delivered') {
+    updateData.eta = new Date().toISOString();
+  }
+
   const order = await Order.findByIdAndUpdate(
     req.params.id,
-    { status },
+    updateData,
     { new: true }
   );
   if (!order) return res.status(404).json({ message: 'Order not found.' });
+
+  // Emit real-time update
+  const io = req.app.get('io');
+  if (io) {
+    io.to(`order_${order._id}`).emit('orderStatusUpdated', order);
+  }
+
   res.json({ order });
 };
 

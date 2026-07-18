@@ -32,6 +32,16 @@ const orderSchema = new mongoose.Schema({
     default: 'pending',
   },
   notes: { type: String, default: '' },
+  deliveryPartner: {
+    name: { type: String },
+    phone: { type: String },
+    vehicle: { type: String },
+    location: {
+      lat: { type: Number },
+      lng: { type: Number }
+    }
+  },
+  eta: { type: String },
 }, { timestamps: true });
 
 export default mongoose.model('Order', orderSchema);

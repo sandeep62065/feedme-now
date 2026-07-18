@@ -10,7 +10,8 @@ A **single-restaurant food ordering web app** built with the MERN stack (MongoDB
 - 🔄 Silent token refresh via Axios interceptor — users stay logged in without re-entering their password
 - 📍 Delivery address with Google Places Autocomplete + "Use my current location" (Geolocation API)
 - 📦 Order placement with **server-side price re-validation** — client prices are never trusted
-- 📋 Order history with a live status tracker (placed → preparing → out for delivery → delivered)
+- 📋 Real-time order tracking (placed → preparing → out for delivery → delivered) via **Socket.io** WebSockets
+- 🗺️ Live Delivery Map and Delivery Partner details integration
 - 🛡️ Admin dashboard to manage menu items (CRUD) and update order statuses
 
 ---

@@ -6,6 +6,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 import connectDB from './config/db.js';
 import { seedOnStartup } from './config/seedOnStartup.js';
 import { errorHandler } from './middleware/error.js';
@@ -25,6 +27,32 @@ dotenv.config({ path: path.join(__dirname, '.env') });
 connectDB().then(() => seedOnStartup());
 
 const app = express();
+const httpServer = createServer(app);
+
+// Initialize Socket.io
+const io = new Server(httpServer, {
+  cors: {
+    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    credentials: true,
+  }
+});
+
+// Expose io to routes/controllers
+app.set('io', io);
+
+io.on('connection', (socket) => {
+  console.log(`🔌 Client connected: ${socket.id}`);
+  
+  // Clients can join a room based on their order ID to receive updates for that specific order
+  socket.on('joinOrderRoom', (orderId) => {
+    socket.join(`order_${orderId}`);
+    console.log(`Socket ${socket.id} joined room order_${orderId}`);
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`🔌 Client disconnected: ${socket.id}`);
+  });
+});
 
 // Security — relax crossOriginResourcePolicy for cross-origin API calls
 app.use(helmet({
@@ -89,8 +117,14 @@ if (process.env.NODE_ENV === 'production') {
 
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () => {
+  httpServer.listen(PORT, () => {
     console.log(`🚀 TastyBite server running on port ${PORT} [${process.env.NODE_ENV || 'development'}]`);
+  });
+} else {
+  // In production, we also need to start the httpServer
+  const PORT = process.env.PORT || 5000;
+  httpServer.listen(PORT, () => {
+    console.log(`🚀 TastyBite server running on port ${PORT} [production]`);
   });
 }
 
