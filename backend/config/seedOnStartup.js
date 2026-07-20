@@ -43,6 +43,16 @@ const restaurantsData = [
     deliveryTime: '25-35 mins',
     deliveryFee: 30,
     address: '789 Pepperoni Street, Little Italy'
+  },
+  {
+    name: 'Biryani House',
+    description: 'Authentic Hyderabadi Dum Biryani and Indian Spices.',
+    image: 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?w=600',
+    rating: 4.9,
+    cuisineType: ['Biryani', 'Indian'],
+    deliveryTime: '30-40 mins',
+    deliveryFee: 20,
+    address: '101 Spice Lane, Food City'
   }
 ];
 
@@ -92,6 +102,8 @@ export const seedOnStartup = async () => {
     const seededRestaurants = await Restaurant.insertMany(restaurantsData);
     const burgerBlast = seededRestaurants.find(r => r.name === 'Burger Blast');
     const pizzaParadise = seededRestaurants.find(r => r.name === 'Pizza Paradise');
+    const biryaniHouse = seededRestaurants.find(r => r.name === 'Biryani House');
+    const biryaniCategory = seededCategories.find(c => c.name === 'Biryani');
     console.log('Seeded restaurants.');
 
     // 4. Seed Foods
@@ -155,6 +167,26 @@ export const seedOnStartup = async () => {
         restaurant: burgerBlast._id,
         isVeg: true,
         rating: 4.7
+      },
+      {
+        name: 'Hyderabadi Chicken Biryani',
+        description: 'Aromatic basmati rice cooked with tender chicken pieces, saffron, and traditional spices.',
+        price: 299,
+        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600',
+        category: biryaniCategory._id,
+        restaurant: biryaniHouse._id,
+        isVeg: false,
+        rating: 4.9
+      },
+      {
+        name: 'Paneer Butter Masala',
+        description: 'Soft paneer cubes simmered in a rich and creamy tomato gravy.',
+        price: 249,
+        image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc0?w=600',
+        category: biryaniCategory._id, // Using biryani category for indian foods temporarily
+        restaurant: biryaniHouse._id,
+        isVeg: true,
+        rating: 4.6
       }
     ];
 

@@ -37,6 +37,10 @@ const menuItems = [
   // Desserts
   { name: 'Chocolate Lava Cake', description: 'Warm dark chocolate cake with a molten centre. Served with vanilla ice cream.', price: 119, category: 'Desserts', image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=600', isVeg: true, isAvailable: true, tags: ['sweet', 'chocolate'] },
   { name: 'Oreo Cheesecake Slice', description: 'Creamy no-bake cheesecake on an Oreo crust, topped with whipped cream.', price: 109, category: 'Desserts', image: 'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=600', isVeg: true, isAvailable: true, tags: ['sweet', 'cold'] },
+
+  // Indian
+  { name: 'Hyderabadi Chicken Biryani', description: 'Aromatic basmati rice cooked with tender chicken pieces, saffron, and traditional spices.', price: 299, category: 'Indian', image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600', isVeg: false, isAvailable: true, tags: ['spicy', 'bestseller'] },
+  { name: 'Paneer Butter Masala', description: 'Soft paneer cubes simmered in a rich and creamy tomato gravy.', price: 249, category: 'Indian', image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc0?w=600', isVeg: true, isAvailable: true, tags: ['veg', 'curry'] }
 ];
 
 const adminUser = {
