@@ -1,46 +1,57 @@
-# TastyBite 🍔
+# Feedme-Now 🍔
 
-A **single-restaurant food ordering web app** built with the MERN stack (MongoDB, Express, React, Node.js).
+A **full-stack food delivery application** built with the MERN stack (MongoDB, Express, React, Node.js). Features a complete ecosystem for Customers, Admins, and Delivery Partners, including real-time order tracking and live GPS map tracking.
 
 ## Features
 
+### 🛒 Customer Features
 - 🍽️ Browse a full restaurant menu with categories, search, and veg/non-veg filtering
 - 🛒 Client-side cart that persists across page refreshes (localStorage)
-- 🔐 JWT auth with short-lived access tokens (15 min) + long-lived refresh tokens (7 days, httpOnly cookie)
-- 🔄 Silent token refresh via Axios interceptor — users stay logged in without re-entering their password
-- 📍 Delivery address with Google Places Autocomplete + "Use my current location" (Geolocation API)
-- 📦 Order placement with **server-side price re-validation** — client prices are never trusted
-- 📋 Real-time order tracking (placed → preparing → out for delivery → delivered) via **Socket.io** WebSockets
-- 🛵 **Delivery Partner Ecosystem**: Separate signup, dashboard, and order assignment.
-- 🗺️ **Live Location Tracking**: Customers can see the delivery partner's live location moving on the map in real-time.
-- 🛡️ Admin dashboard to manage menu items (CRUD) and update order statuses
+- 📍 Set delivery address automatically using Geolocation API
+- 📦 Place orders with **server-side price re-validation** to prevent tampering
+- 📋 Real-time order tracking (Placed → Preparing → Out for Delivery → Delivered)
+- 🗺️ **Live Map Tracking**: Watch the delivery partner approach your location in real-time on a live map (using Leaflet & Socket.io)
+
+### 🛵 Delivery Partner Ecosystem
+- 📱 Dedicated dashboard for delivery partners (`/delivery-dashboard`)
+- 🔔 Live assignment of orders
+- 📍 Real-time GPS broadcasting to update the customer's map
+- ✅ Ability to mark orders as Delivered instantly
+
+### 🛡️ Admin Features
+- 📊 Admin dashboard to manage menu items (Create, Read, Update, Delete)
+- 🔄 Update order statuses manually
+
+### 🔐 Security & Auth
+- 🛡️ JWT authentication with secure HTTP-only cookies
+- 🔄 Silent token refresh logic (users stay logged in securely)
+- 🚪 Protected routes for both frontend and backend APIs
 
 ---
 
 ## Prerequisites
 
 - **Node.js** v18 or higher
-- **MongoDB** running locally (`mongod`) or a MongoDB Atlas connection string
-- (Optional) A **Google Maps API key** for address autocomplete
+- **MongoDB** Atlas connection string (or local MongoDB)
 
 ---
 
-## Setup
+## Setup & Local Development
 
 ### 1. Backend
 
 ```bash
 cd backend
 cp .env.example .env
-# Edit .env with your MongoDB URI and JWT secrets
+# Edit .env with your MONGODB_URI and JWT secrets
 npm install
 npm run dev        # starts on http://localhost:5000
 ```
 
-**Seed sample data** (requires MongoDB to be running):
+**Seed sample data** (requires MongoDB to be connected):
 ```bash
 npm run seed
-# Creates 16 menu items + admin user: admin@tastybite.com / admin123
+# Note: The server is also configured to auto-seed the database on the first API request if the menu is empty.
 ```
 
 ### 2. Frontend
@@ -48,7 +59,7 @@ npm run seed
 ```bash
 cd frontend
 cp .env.example .env
-# Add your VITE_GOOGLE_MAPS_API_KEY if available (optional)
+# Edit .env and ensure VITE_API_BASE_URL points to your backend (e.g. http://localhost:5000/api)
 npm install
 npm run dev        # starts on http://localhost:5173
 ```
@@ -62,99 +73,75 @@ npm run dev        # starts on http://localhost:5173
 | Variable | Description | Default |
 |---|---|---|
 | `PORT` | Server port | `5000` |
-| `MONGODB_URI` | MongoDB connection string | `mongodb://127.0.0.1:27017/tastybite` |
+| `MONGODB_URI` | MongoDB connection string | `mongodb+srv://...` |
 | `JWT_ACCESS_SECRET` | Secret for signing access tokens | *(required)* |
 | `JWT_REFRESH_SECRET` | Secret for signing refresh tokens | *(required)* |
 | `JWT_ACCESS_EXPIRY` | Access token lifetime | `15m` |
 | `JWT_REFRESH_EXPIRY` | Refresh token lifetime | `7d` |
 | `NODE_ENV` | Environment | `development` |
-| `FRONTEND_URL` | Allowed CORS origin | `http://localhost:5173` |
+| `CLIENT_URL` | Allowed CORS origin (Frontend URL) | `http://localhost:5173` |
 
 ### `frontend/.env`
 
 | Variable | Description |
 |---|---|
-| `VITE_API_BASE_URL` | Backend API base URL (e.g. `http://localhost:5000/api`) |
-| `VITE_GOOGLE_MAPS_API_KEY` | Google Maps API key (optional — falls back to plain text input) |
+| `VITE_API_BASE_URL` | Backend API base URL |
+
+*(For production, you can create a `.env.production` file to set `VITE_API_BASE_URL` to your live Vercel backend URL)*
 
 ---
 
-## Getting a Google Maps API Key
+## Deployment (Vercel)
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project (or select an existing one)
-3. Enable these three APIs:
-   - **Maps JavaScript API**
-   - **Places API**
-   - **Geocoding API**
-4. Go to **Credentials → Create API Key**
-5. (Recommended) Add HTTP referrer restrictions: `http://localhost:5173/*`
-6. Copy the key into `frontend/.env` as `VITE_GOOGLE_MAPS_API_KEY`
+The app is fully optimized for Vercel deployment:
+
+1. **Backend**: 
+   - Deploy the `backend` folder to Vercel as a Node.js project.
+   - Configure `MONGODB_URI` and JWT secrets in Vercel Environment Variables.
+   - The app uses serverless-friendly routing and CORS setups.
+
+2. **Frontend**:
+   - Deploy the `frontend` folder to Vercel as a Vite/React project.
+   - The `vercel.json` file ensures proper SPA (Single Page Application) routing to prevent 404s on page refresh.
+   - Set `VITE_API_BASE_URL` to point to your live backend domain.
+
+> ⚠️ **Important Note for Vercel Deployments**: Ensure that Vercel's "Deployment Protection" (Vercel Authentication) is turned **OFF** in your project settings, otherwise the APIs and frontend assets will be blocked by Vercel's login screen.
 
 ---
 
 ## API Reference
 
 ### Auth — `/api/auth`
-| Method | Route | Auth | Description |
-|---|---|---|---|
-| POST | `/signup` | — | Register new user |
-| POST | `/login` | — | Login, returns access token + sets refresh cookie |
-| POST | `/logout` | — | Clears refresh token |
-| POST | `/refresh` | Cookie | Get new access token |
-| GET | `/me` | ✅ | Get current user profile |
-| GET | `/addresses` | ✅ | List saved addresses |
-| POST | `/addresses` | ✅ | Add a saved address |
-| DELETE | `/addresses/:id` | ✅ | Remove a saved address |
+- `POST /signup` - Register new user
+- `POST /login` - Login, returns access token + sets refresh cookie
+- `POST /logout` - Clears refresh token
+- `POST /refresh` - Get new access token
+- `GET /me` - Get current user profile
 
 ### Menu — `/api/menu`
-| Method | Route | Auth | Description |
-|---|---|---|---|
-| GET | `/` | — | All available items (optional `?category=`) |
-| GET | `/search?q=` | — | Regex search across name/description/category |
-| GET | `/categories` | — | Distinct category list |
-| GET | `/:id` | — | Single item |
-| POST | `/` | 🛡️ Admin | Create item |
-| PUT | `/:id` | 🛡️ Admin | Update item |
-| DELETE | `/:id` | 🛡️ Admin | Delete item |
+- `GET /` - All available items
+- `GET /:id` - Single item
+- `POST /` - Create item (Admin)
+- `PUT /:id` - Update item (Admin)
+- `DELETE /:id` - Delete item (Admin)
 
 ### Orders — `/api/orders`
-| Method | Route | Auth | Description |
-|---|---|---|---|
-| POST | `/` | ✅ | Place order (re-validates prices server-side) |
-| GET | `/` | ✅ | Current user's order history |
-| GET | `/all` | 🛡️ Admin | All orders |
-| GET | `/:id` | ✅ | Single order (owner or admin) |
-| PATCH | `/:id/status` | 🛡️ Admin | Update order status |
+- `POST /` - Place an order
+- `GET /` - Get user's order history
+- `GET /all` - Get all orders (Admin)
+- `PATCH /:id/status` - Update order status (Admin)
 
----
-
-## Project Structure
-
-```
-food ordering/
-├── backend/
-│   ├── config/          # MongoDB connection
-│   ├── controllers/     # authController, menuController, orderController
-│   ├── middleware/       # protect, adminOnly, errorHandler
-│   ├── models/          # User, MenuItem, Order
-│   ├── routes/          # auth.js, menu.js, orders.js
-│   ├── seed.js          # Sample data seed script
-│   └── server.js
-└── frontend/
-    └── src/
-        ├── context/     # AuthContext, CartContext
-        ├── services/    # api.js (Axios + token refresh interceptor)
-        ├── components/  # Navbar, MenuItemCard, CartItemRow, AddressAutocomplete, guards
-        └── pages/       # Home, Menu, Cart, Login, Signup, Checkout, Orders, Admin
-```
+### Delivery — `/api/delivery`
+- `GET /available-orders` - Get orders marked as 'Preparing' or 'Out for delivery'
+- `POST /accept-order` - Accept an order for delivery
+- `POST /complete-order` - Mark order as 'Delivered'
 
 ---
 
 ## Admin Access
 
-After running the seed script:
+After running the seed script, you can log in as admin:
 - **Email:** `admin@tastybite.com`
 - **Password:** `admin123`
 
-> ⚠️ Change the admin password immediately in a production environment.
+> ⚠️ Please change the admin credentials immediately in a production environment.
