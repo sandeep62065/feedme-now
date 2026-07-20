@@ -1,4 +1,5 @@
 import MenuItem from '../models/MenuItem.js';
+import { menuItems } from '../data/menuItems.js';
 
 /**
  * GET /api/menu
@@ -10,6 +11,14 @@ export const getMenu = async (req, res) => {
     const escapedCategory = req.query.category.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     filter.category = { $regex: new RegExp(`^${escapedCategory}$`, 'i') };
   }
+  
+  // Auto-seed if empty (fixes Vercel serverless environment)
+  const count = await MenuItem.countDocuments();
+  if (count === 0) {
+    console.log('Menu is empty, auto-seeding from controller...');
+    await MenuItem.insertMany(menuItems);
+  }
+
   const items = await MenuItem.find(filter).sort({ category: 1, name: 1 });
   res.json({ items });
 };
