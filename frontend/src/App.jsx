@@ -27,6 +27,7 @@ function MainLayout() {
         <Outlet />
       </main>
 
+      {/* TODO: footer looks too basic, maybe add a newsletter signup later? */}
       {/* ── Footer ─────────────────────────────────────────────── */}
       <footer className="bg-gray-950 text-gray-400">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
@@ -128,6 +129,7 @@ export default function App() {
             
             <Routes>
               {/* Standalone Delivery App (No Navbar/Footer) */}
+              {/* Note: I kept this separate because delivery guys don't need to see the main site */}
               <Route
                 path="/delivery-dashboard"
                 element={<DeliveryRoute><DeliveryDashboardPage /></DeliveryRoute>}

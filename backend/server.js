@@ -57,6 +57,9 @@ app.set('io', io);
 io.on('connection', (socket) => {
   console.log(`🔌 Client connected: ${socket.id}`);
   
+  // haha testing if this logs on vercel
+  // console.log("socket connection attempt from", socket.handshake.headers.origin);
+
   // Clients can join a room based on their order ID to receive updates for that specific order
   socket.on('joinOrderRoom', (orderId) => {
     socket.join(`order_${orderId}`);
@@ -140,6 +143,7 @@ if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 5000;
   httpServer.listen(PORT, () => {
     console.log(`🚀 TastyBite server running on port ${PORT} [production]`);
+    // console.log("finally deployed, fingers crossed it doesn't crash 🤞");
   });
 }
 
