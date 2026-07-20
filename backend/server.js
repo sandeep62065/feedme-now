@@ -11,6 +11,8 @@ import { Server } from 'socket.io';
 import connectDB from './config/db.js';
 import { seedOnStartup } from './config/seedOnStartup.js';
 import { errorHandler } from './middleware/error.js';
+import MenuItem from './models/MenuItem.js';
+import { newItems } from './data/newItems.js';
 
 // Route imports
 import authRoutes from './routes/auth.js';
@@ -109,6 +111,20 @@ app.get('/api/seed', async (req, res) => {
   try {
     await seedOnStartup();
     res.json({ message: 'Database seeding checked and executed.' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/temp-seed', async (req, res) => {
+  try {
+    // Only insert if these items don't exist yet
+    const count = await MenuItem.countDocuments({ tags: 'seed' });
+    if (count === 0) {
+      await MenuItem.insertMany(newItems);
+      return res.json({ message: 'Successfully inserted 45 new items across 9 categories!' });
+    }
+    res.json({ message: 'Items already seeded' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
