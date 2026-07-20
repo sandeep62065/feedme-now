@@ -116,20 +116,6 @@ app.get('/api/seed', async (req, res) => {
   }
 });
 
-app.get('/api/temp-seed', async (req, res) => {
-  try {
-    // Only insert if these items don't exist yet
-    const count = await MenuItem.countDocuments({ tags: 'seed' });
-    if (count === 0) {
-      await MenuItem.insertMany(newItems);
-      return res.json({ message: 'Successfully inserted 45 new items across 9 categories!' });
-    }
-    res.json({ message: 'Items already seeded' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
 // Global error handler (must be last api middleware)
 app.use(errorHandler);
 
