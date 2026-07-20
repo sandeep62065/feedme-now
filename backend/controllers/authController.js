@@ -13,11 +13,17 @@ const signRefreshToken = (id) =>
     expiresIn: process.env.JWT_REFRESH_EXPIRY || '7d',
   });
 
-const REFRESH_COOKIE_OPTIONS = {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
+const getCookieOptions = (req) => {
+  const origin = req.headers.origin || '';
+  const host = req.headers.host || '';
+  const isCrossDomain = origin && !origin.includes(host);
+  
+  return {
+    httpOnly: true,
+    secure: isCrossDomain || process.env.NODE_ENV === 'production',
+    sameSite: isCrossDomain ? 'none' : 'lax',
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
+  };
 };
 
 // ─── Controllers ─────────────────────────────────────────────────────────────
@@ -52,7 +58,7 @@ export const signup = async (req, res) => {
     user.refreshToken = refreshToken;
     await user.save();
 
-    res.cookie('refreshToken', refreshToken, REFRESH_COOKIE_OPTIONS);
+    res.cookie('refreshToken', refreshToken, getCookieOptions(req));
     res.status(201).json({ accessToken, user });
   } catch (error) {
     console.error('Signup error:', error);
@@ -81,7 +87,7 @@ export const login = async (req, res) => {
     user.refreshToken = refreshToken;
     await user.save();
 
-    res.cookie('refreshToken', refreshToken, REFRESH_COOKIE_OPTIONS);
+    res.cookie('refreshToken', refreshToken, getCookieOptions(req));
     res.json({ accessToken, user });
   } catch (error) {
     console.error('Login error:', error);
@@ -97,11 +103,7 @@ export const logout = async (req, res) => {
   if (token) {
     await User.findOneAndUpdate({ refreshToken: token }, { refreshToken: null });
   }
-  res.clearCookie('refreshToken', {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-  });
+  res.clearCookie('refreshToken', getCookieOptions(req));
   res.json({ message: 'Logged out successfully.' });
 };
 
