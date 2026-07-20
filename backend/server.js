@@ -82,12 +82,7 @@ app.use(helmet({
 // Set CLIENT_URL=* to allow all origins temporarily during testing
 
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production'
-    ? (allowedOrigins === null
-        // Reflect any requesting origin (temporary wildcard that supports credentials)
-        ? (origin, cb) => cb(null, true)
-        : allowedOrigins)
-    : true,
+  origin: (origin, cb) => cb(null, true),
   credentials: true,
 }));
 
@@ -106,6 +101,15 @@ app.use('/api/auth', authRoutes);
 app.use('/api/menu', menuRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/delivery', deliveryRoutes);
+
+app.get('/api/seed', async (req, res) => {
+  try {
+    await seedOnStartup();
+    res.json({ message: 'Database seeding checked and executed.' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // Global error handler (must be last api middleware)
 app.use(errorHandler);
