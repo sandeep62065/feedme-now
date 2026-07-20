@@ -116,24 +116,6 @@ app.get('/api/seed', async (req, res) => {
   }
 });
 
-app.get('/api/cleanup', async (req, res) => {
-  try {
-    // 1. Get all items without 'seed' tag
-    const oldItems = await MenuItem.find({ tags: { $ne: 'seed' } });
-    const oldNames = oldItems.map(item => item.name);
-    
-    // 2. Delete items with 'seed' tag whose name is in oldNames
-    const result = await MenuItem.deleteMany({
-      tags: 'seed',
-      name: { $in: oldNames }
-    });
-    
-    res.json({ message: `Deleted ${result.deletedCount} duplicate items.` });
-  } catch(err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
 // Global error handler (must be last api middleware)
 app.use(errorHandler);
 
