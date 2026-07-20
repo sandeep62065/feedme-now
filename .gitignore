@@ -41,3 +41,7 @@ Thumbs.db
 .gemini/
 .agents/
 .cortex/
+
+# Untracked Folders
+stitch_freshbite_food_delivery_ui/
+Viva_Materials/
